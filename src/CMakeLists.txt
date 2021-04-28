@@ -4,11 +4,9 @@ set(CORE_SOURCE_FILES
 
         # Raytracer.
         "${PROJECT_SOURCE_DIR}/src/raytracer/aabb.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/writer.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/material.cpp"
 
-        # Writers.
-        "${PROJECT_SOURCE_DIR}/src/raytracer/writers/image_writer.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/writers/ppm_writer.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/writers/jpg_writer.cpp"
         )
 
 add_executable(RT ${CORE_SOURCE_FILES})

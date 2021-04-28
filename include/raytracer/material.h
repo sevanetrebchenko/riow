@@ -14,6 +14,8 @@ namespace RT {
             [[nodiscard]] virtual glm::vec3 GetEmitted(float u, float v, const glm::vec3& point) const;
     };
 
+
+
     class Lambertian : public IMaterial {
         public:
             explicit Lambertian(const glm::vec3& albedo);
@@ -25,6 +27,8 @@ namespace RT {
             glm::vec3 _albedo;
     };
 
+
+
     class Metallic : public IMaterial {
         public:
             Metallic(const glm::vec3& albedo, float fuzziness);
@@ -33,11 +37,11 @@ namespace RT {
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 
         private:
-            [[nodiscard]] glm::vec3 Reflect(const glm::vec3& v, const glm::vec3& n) const;
-
             glm::vec3 _albedo;
             float _fuzziness;
     };
+
+
 
     class Dielectric : public IMaterial {
         public:
@@ -47,8 +51,6 @@ namespace RT {
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 
         private:
-            [[nodiscard]] glm::vec3 Reflect(const glm::vec3& v, const glm::vec3& n) const;
-            [[nodiscard]] glm::vec3 Refract(const glm::vec3& v, const glm::vec3& n, float refractionRatio) const;
             [[nodiscard]] float SchlickApproximation(float refractionCoefficient, float refractionRatio) const;
 
             float _refractionIndex;
