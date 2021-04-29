@@ -15,19 +15,14 @@ namespace RT {
             [[nodiscard]] const glm::vec3& GetPosition() const;
             [[nodiscard]] const glm::vec3& GetRotation() const;
             [[nodiscard]] const glm::vec3& GetScale() const;
-
-            [[nodiscard]] Ray TransformRay(const Ray& input) const;
-            void UndoTransform(const Ray& transformed, HitRecord& hitRecord) const;
+            [[nodiscard]] const glm::mat4& GetMatrix() const;
 
         private:
             void CalculateMatrix();
-
             glm::vec3 _position;
             glm::vec3 _rotation;
             glm::vec3 _scale;
-
-            glm::mat4 _to;
-            glm::mat4 _from;
+            glm::mat4 _matrix;
     };
 
 }

@@ -9,9 +9,16 @@ namespace RT {
                                                                                                                                       {
     }
 
+    Intersectable::Intersectable(const Transform &transform, IMaterial* material) : _transform(transform),
+                                                                                    _aabb(transform),
+                                                                                    _material(material)
+                                                                                    {
+    }
+
     Intersectable::~Intersectable() = default;
 
     const AABB &Intersectable::GetBoundingBox() const {
         return _aabb;
     }
+
 }

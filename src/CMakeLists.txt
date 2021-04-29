@@ -14,8 +14,11 @@ set(CORE_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/src/raytracer/utility_math.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/transform.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/material.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/sphere.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/directory.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/object_loader.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/mesh.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/model.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/intersections.cpp"
         )
 
 add_executable(RT ${CORE_SOURCE_FILES})

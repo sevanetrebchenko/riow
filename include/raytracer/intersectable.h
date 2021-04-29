@@ -12,6 +12,7 @@ namespace RT {
     class Intersectable {
         public:
             Intersectable(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, IMaterial* material);
+            Intersectable(const Transform& transform, IMaterial* material);
             virtual ~Intersectable();
 
             [[nodiscard]] virtual bool Intersect(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const = 0;

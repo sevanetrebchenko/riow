@@ -13,6 +13,8 @@ namespace RT {
     struct HitRecord {
         HitRecord();
 
+        void SetNormal(const Ray& ray, const glm::vec3& normal);
+
         bool outwardFacing;
         IMaterial* material;
         float dt;

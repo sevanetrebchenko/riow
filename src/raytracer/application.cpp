@@ -1,13 +1,14 @@
 
 #include <raytracer/application.h>
 #include <raytracer/hit_record.h>
-#include <raytracer/sphere.h>
 #include <raytracer/material.h>
 #include <raytracer/utility_math.h>
+#include <raytracer/model.h>
+#include <raytracer/object_loader.h>
 
 namespace RT {
 
-    Application::Application(const std::string &outputFilename, int width, int height) : _camera({ 0.0f, 0.0f, 3.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 90, (float)width / (float)height),
+    Application::Application(const std::string &outputFilename, int width, int height) : _camera({ 0.0f, 2.0f, 3.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 90, (float)width / (float)height),
                                                                                          _width(width),
                                                                                          _height(height),
                                                                                          _writer(new JPGWriter(outputFilename, width, height))
@@ -18,10 +19,8 @@ namespace RT {
     }
 
     void Application::Init() {
-        // Floor.
-        _collection.Add(new Sphere(glm::vec3(0.0f, -1001.0f, 0.0f), glm::vec3(0.0f), 1000.0f, new Lambertian(glm::vec3(0.5f))));
-        // Sphere.
-        _collection.Add(new Sphere(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), 1.0f, new Lambertian(glm::vec3(0.5f))));
+        _collection.Add(new Model(glm::vec3(0.0f, -1001.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1000.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Metallic(glm::vec3(0.5f), 0.0f)));
+        _collection.Add(new Model(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -35.0f, 0.0f), glm::vec3(1.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Dielectric(1.55f)));
     }
 
     void Application::Run() {
