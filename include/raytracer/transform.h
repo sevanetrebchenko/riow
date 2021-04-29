@@ -2,34 +2,32 @@
 #ifndef RAYTRACER_TRANSFORM_H
 #define RAYTRACER_TRANSFORM_H
 
+#include <raytracer/ray.h>
+#include <raytracer/hit_record.h>
+
 namespace RT {
 
     class Transform {
         public:
-            Transform();
+            Transform(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
             ~Transform();
 
-            void SetPosition(glm::vec3 position);
-            [[nodiscard]] glm::vec3 GetPosition() const;
+            [[nodiscard]] const glm::vec3& GetPosition() const;
+            [[nodiscard]] const glm::vec3& GetRotation() const;
+            [[nodiscard]] const glm::vec3& GetScale() const;
 
-            void SetScale(glm::vec3 scale);
-            [[nodiscard]] glm::vec3 GetScale() const;
-
-            void SetRotation(glm::vec3 rotation);
-            [[nodiscard]] glm::vec3 GetRotation() const;
-
-            [[nodiscard]] glm::mat4 GetMatrix();
+            [[nodiscard]] Ray TransformRay(const Ray& input) const;
+            void UndoTransform(const Ray& transformed, HitRecord& hitRecord) const;
 
         private:
             void CalculateMatrix();
 
-            bool _isDirty;
-            glm::mat4 _matrix;
-
+            glm::vec3 _position;
             glm::vec3 _rotation;
             glm::vec3 _scale;
-            glm::vec3 _position;
 
+            glm::mat4 _to;
+            glm::mat4 _from;
     };
 
 }

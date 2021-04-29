@@ -1,5 +1,6 @@
 
 #include <raytracer/writer.h>
+#include <raytracer/directory.h>
 
 // STB.
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -36,9 +37,9 @@ namespace RT {
 
 
     // JPGWriter.
-    JPGWriter::JPGWriter(std::string outputFilename, int imageWidth, int imageHeight) : IWriter(std::move(outputFilename), imageWidth, imageHeight),
-                                                                                        _channels(3),
-                                                                                        _data(new unsigned char[_imageWidth * _imageHeight * _channels])
+    JPGWriter::JPGWriter(const std::string& outputFilename, int imageWidth, int imageHeight) : IWriter(GetAssetName(outputFilename), imageWidth, imageHeight),
+                                                                                               _channels(3),
+                                                                                               _data(new unsigned char[_imageWidth * _imageHeight * _channels])
     {
     }
 

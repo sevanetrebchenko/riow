@@ -3,10 +3,19 @@ set(CORE_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/src/main.cpp"
 
         # Raytracer.
-        "${PROJECT_SOURCE_DIR}/src/raytracer/aabb.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/application.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/writer.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/ray.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/camera.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/hit_record.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/intersectable.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/intersectable_collection.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/aabb.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/utility_math.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/transform.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/material.cpp"
-
+        "${PROJECT_SOURCE_DIR}/src/raytracer/sphere.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/directory.cpp"
         )
 
 add_executable(RT ${CORE_SOURCE_FILES})

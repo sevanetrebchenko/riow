@@ -23,4 +23,22 @@ namespace RT {
         return _origin + t * _direction;
     }
 
+    Ray::Ray(const Ray &other) : _origin(other._origin),
+                                 _direction(other._direction)
+                                 {
+    }
+
+    Ray &Ray::operator=(const Ray &other) {
+        if (&other == this) {
+            return *this;
+        }
+
+        _origin = other._origin;
+        _direction = other._direction;
+
+        return *this;
+    }
+
+
+
 }

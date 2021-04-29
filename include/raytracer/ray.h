@@ -11,6 +11,9 @@ namespace RT {
             explicit Ray(const glm::vec3& origin = glm::vec3(0.0f), const glm::vec3& direction = glm::vec3(0.0f));
             ~Ray();
 
+            Ray(const Ray& other);
+            Ray& operator=(const Ray& other);
+
             [[nodiscard]] const glm::vec3& GetOrigin() const;
             [[nodiscard]] const glm::vec3& GetDirection() const;
 

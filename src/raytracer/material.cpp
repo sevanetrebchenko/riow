@@ -15,8 +15,6 @@ namespace RT {
         return ((K * refractionCoefficient) - std::sqrt(1.0f - K * K * (1.0f - refractionCoefficient * refractionCoefficient))) * N - K * -V;
     }
 
-
-
     glm::vec3 IMaterial::GetEmitted(float u, float v, const glm::vec3 &point) const {
         return glm::vec3(0.0f); // Non-emitting materials return black.
     }

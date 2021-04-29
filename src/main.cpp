@@ -1,6 +1,5 @@
 
 #include <raytracer/application.h>
-#include <raytracer/intersections.h>
 
 int main() {
     RT::Application app("test", 500, 500);

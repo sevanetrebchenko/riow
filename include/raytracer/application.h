@@ -2,11 +2,11 @@
 #ifndef RAYTRACER_APPLICATION_H
 #define RAYTRACER_APPLICATION_H
 
-#include <raytracer/writers/image_writer.h>
+#include <pch.h>
+#include <raytracer/writer.h>
 #include <raytracer/camera.h>
-#include <raytracer/model_manager.h>
-#include <raytracer/object_loader.h>
 #include <raytracer/ray.h>
+#include <raytracer/intersectable_collection.h>
 
 namespace RT {
 
@@ -20,13 +20,10 @@ namespace RT {
             void Shutdown();
 
         private:
-            void BunnyScene();
-            void CornellBox();
-
             [[nodiscard]] glm::vec3 RayColor(const Ray& ray, int numBounces) const;
 
-            ModelManager _modelManager;
             Camera _camera;
+            IntersectableCollection _collection;
 
             int _width;
             int _height;

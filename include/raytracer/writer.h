@@ -26,7 +26,7 @@ namespace RT {
     // Writes to .jpg files.
     class JPGWriter : public IWriter {
         public:
-            JPGWriter(std::string outputFilename, int imageWidth, int imageHeight);
+            JPGWriter(const std::string& outputFilename, int imageWidth, int imageHeight);
             ~JPGWriter() override;
 
         private:

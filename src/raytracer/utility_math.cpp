@@ -45,43 +45,43 @@ namespace RT {
             return PointClassification::POINT_ON_PLANE;
         }
     }
-
-    TriangleClassification ClassifyTriangleToPlane(const Triangle &triangle, const glm::vec4 &plane) {
-        int numFront = 0;
-        int numBehind = 0;
-
-        // Classify
-        for (const glm::vec3& vertex : triangle.GetVertices()) {
-            switch (ClassifyPointToPlane(vertex, plane)) {
-                case PointClassification::POINT_IN_FRONT_OF_PLANE:
-                    ++numFront;
-                    break;
-                case PointClassification::POINT_BEHIND_PLANE:
-                    ++numBehind;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        // Triangle has vertices on both sides of the plane.
-        if (numBehind != 0 && numFront != 0) {
-            return TriangleClassification::TRIANGLE_STRADDLING_PLANE;
-        }
-
-        // Only front-facing vertices.
-        if (numFront != 0) {
-            return TriangleClassification::TRIANGLE_IN_FRONT_OF_PLANE;
-        }
-
-        // Only back-facing vertices.
-        if (numBehind != 0) {
-            return TriangleClassification::TRIANGLE_BEHIND_PLANE;
-        }
-
-        // ALl vertices lie on the plane.
-        return TriangleClassification::TRIANGLE_COPLANAR_WITH_PLANE;
-    }
+//
+//    TriangleClassification ClassifyTriangleToPlane(const Triangle &triangle, const glm::vec4 &plane) {
+//        int numFront = 0;
+//        int numBehind = 0;
+//
+//        // Classify
+//        for (const glm::vec3& vertex : triangle.GetVertices()) {
+//            switch (ClassifyPointToPlane(vertex, plane)) {
+//                case PointClassification::POINT_IN_FRONT_OF_PLANE:
+//                    ++numFront;
+//                    break;
+//                case PointClassification::POINT_BEHIND_PLANE:
+//                    ++numBehind;
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//
+//        // Triangle has vertices on both sides of the plane.
+//        if (numBehind != 0 && numFront != 0) {
+//            return TriangleClassification::TRIANGLE_STRADDLING_PLANE;
+//        }
+//
+//        // Only front-facing vertices.
+//        if (numFront != 0) {
+//            return TriangleClassification::TRIANGLE_IN_FRONT_OF_PLANE;
+//        }
+//
+//        // Only back-facing vertices.
+//        if (numBehind != 0) {
+//            return TriangleClassification::TRIANGLE_BEHIND_PLANE;
+//        }
+//
+//        // ALl vertices lie on the plane.
+//        return TriangleClassification::TRIANGLE_COPLANAR_WITH_PLANE;
+//    }
 
     glm::vec3 RandomDirection(float min, float max) {
         return glm::vec3(glm::linearRand(min, max), glm::linearRand(min, max), glm::linearRand(min, max));

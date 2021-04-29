@@ -15,7 +15,6 @@ namespace RT {
     };
 
 
-
     class Lambertian : public IMaterial {
         public:
             explicit Lambertian(const glm::vec3& albedo);
@@ -26,7 +25,6 @@ namespace RT {
         private:
             glm::vec3 _albedo;
     };
-
 
 
     class Metallic : public IMaterial {
@@ -40,7 +38,6 @@ namespace RT {
             glm::vec3 _albedo;
             float _fuzziness;
     };
-
 
 
     class Dielectric : public IMaterial {

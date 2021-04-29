@@ -3,7 +3,6 @@
 #define RAYTRACER_UTILITY_MATH_H
 
 #include <pch.h>
-#include <raytracer/mesh.h>
 
 namespace RT {
 
@@ -25,7 +24,7 @@ namespace RT {
     };
 
     PointClassification ClassifyPointToPlane(const glm::vec3& point, const glm::vec4& plane);
-    TriangleClassification ClassifyTriangleToPlane(const Triangle& triangle, const glm::vec4& plane);
+//    TriangleClassification ClassifyTriangleToPlane(const Triangle& triangle, const glm::vec4& plane);
 
     template <typename T>
     T lerp(const T& first, const T& second, float t) {
