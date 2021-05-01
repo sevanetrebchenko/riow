@@ -3,12 +3,11 @@
 #include <raytracer/hit_record.h>
 #include <raytracer/material.h>
 #include <raytracer/utility_math.h>
-#include <raytracer/model.h>
-#include <raytracer/object_loader.h>
+#include <raytracer/sphere.h>
 
 namespace RT {
 
-    Application::Application(const std::string &outputFilename, int width, int height) : _camera({ 0.0f, 2.0f, 3.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 90, (float)width / (float)height),
+    Application::Application(const std::string &outputFilename, int width, int height) : _camera({ 0.0f, 0.0f, 8.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45, (float)width / (float)height),
                                                                                          _width(width),
                                                                                          _height(height),
                                                                                          _writer(new JPGWriter(outputFilename, width, height))
@@ -19,8 +18,10 @@ namespace RT {
     }
 
     void Application::Init() {
-        _collection.Add(new Model(glm::vec3(0.0f, -1001.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1000.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Metallic(glm::vec3(0.5f), 0.0f)));
-        _collection.Add(new Model(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -35.0f, 0.0f), glm::vec3(1.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Dielectric(1.55f)));
+        _collection.Add(new Sphere(glm::vec3(0.0f, -1001.0f, 0.0f), 1000.0f, new Lambertian(glm::vec3(0.5f))));
+        _collection.Add(new Sphere(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, new Lambertian(glm::vec3(0.5f))));
+        _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
+        _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
     }
 
     void Application::Run() {
@@ -59,24 +60,53 @@ namespace RT {
     }
 
     glm::vec3 Application::RayColor(const Ray &ray, int numBounces) const {
+        static glm::vec3 background(0.0f);
+
         HitRecord hitRecord;
 
         // Reached the limit to how many ray bounces each ray has.
         if (numBounces <= 0) {
-            return glm::vec3(0.0f); // No color contribution.
+            return background; // No color contribution.
         }
 
-        if (_collection.Intersect(ray, 0.001f, std::numeric_limits<float>::infinity(), hitRecord)) {
+        // Ray does not intersect scene, return background color.
+        if (_collection.Hit(ray, 0.001f, std::numeric_limits<float>::infinity(), hitRecord)) {
             Ray scattered;
             glm::vec3 attenuation;
 
-            if (hitRecord.material->GetScattered(ray, hitRecord, attenuation, scattered)) {
+            if (hitRecord.GetIntersectionMaterial()->GetScattered(ray, hitRecord, attenuation, scattered)) {
                 return attenuation * RayColor(scattered, numBounces - 1);
             }
         }
 
         float t = 0.5f * (ray.GetDirection().y + 1.0f);
         return lerp(glm::vec3(0.5f, 0.7f, 1.0f), glm::vec3(1.0f), t);
+    }
+
+    void Application::CornellCube() {
+        glm::vec3 redColor = glm::vec3(178.0f, 34.0f, 34.0f) / glm::vec3(255.0f);
+        glm::vec3 greenColor = glm::vec3(0.0f, 128.0f, 0.0f) / glm::vec3(255.0f);
+
+        glm::vec3 blue(0.0f, 0.0f, 1.0f);
+
+//        // Red.
+//        _collection.Add(new Model(glm::vec3(-16.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(redColor)));
+//        // Green.
+//        _collection.Add(new Model(glm::vec3(16.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(greenColor)));
+//
+//        glm::vec3 wallColor = glm::vec3(255.0f, 245.0f, 181.0f) / glm::vec3(255.0f);
+//
+//        // Floor.
+//        _collection.Add(new Model(glm::vec3(0.0f, -16.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(wallColor)));
+//        // Ceiling.
+//        _collection.Add(new Model(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(wallColor)));
+//        // Back wall.
+//        _collection.Add(new Model(glm::vec3(0.0f, 0.0f, -16.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(wallColor)));
+//
+//        // Cube 1.
+//        _collection.Add(new Model(glm::vec3(2.0f, -4.0f, -4.0f), glm::vec3(0.0f, -20.0f, 0.0f), glm::vec3(2.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(blue)));
+//        // Cube 2.
+//        _collection.Add(new Model(glm::vec3(-7.0f, 0.0f, -7.0f), glm::vec3(0.0f, 15.0f, 0.0f), glm::vec3(3.0f, 6.0f, 3.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(blue)));
     }
 
 }

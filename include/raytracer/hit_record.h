@@ -10,17 +10,34 @@ namespace RT {
     // Forward declaration.
     class IMaterial;
 
-    struct HitRecord {
-        HitRecord();
+    class HitRecord {
+        public:
+            HitRecord();
+            ~HitRecord();
 
-        void SetNormal(const Ray& ray, const glm::vec3& normal);
+            void SetIntersectionTime(float dt);
+            [[nodiscard]] float GetIntersectionTime() const;
 
-        bool outwardFacing;
-        IMaterial* material;
-        float dt;
-        glm::vec3 point;
-        glm::vec3 normal;
-        glm::vec2 uv;
+            void SetIntersectionPoint(const glm::vec3& point);
+            [[nodiscard]] const glm::vec3& GetIntersectionPoint() const;
+
+            void SetIntersectionNormal(const Ray& ray, const glm::vec3& normal);
+            [[nodiscard]] const glm::vec3& GetIntersectionNormal() const;
+            [[nodiscard]] bool GetOutwardFacing() const;
+
+            void SetIntersectionUVs(const glm::vec2& uv);
+            [[nodiscard]] const glm::vec2& GetIntersectionUVs() const;
+
+            void SetIntersectionMaterial(IMaterial* material);
+            [[nodiscard]] const IMaterial* GetIntersectionMaterial() const;
+
+        private:
+            float _dt;
+            glm::vec3 _point;
+            glm::vec3 _normal;
+            glm::vec2 _uv;
+            IMaterial* _material;
+            bool _frontFacing;
     };
 
 }

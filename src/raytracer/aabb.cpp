@@ -49,9 +49,6 @@ namespace RT {
         }
     }
 
-    AABB::AABB(const Transform &transform) : AABB(transform.GetPosition(), transform.GetRotation(), transform.GetScale()) {
-    }
-
     AABB Combine(const AABB &aabb1, const AABB &aabb2) {
         glm::vec3 minimum = glm::min(aabb1.minimum, aabb2.minimum);
         glm::vec3 maximum = glm::max(aabb1.maximum, aabb2.maximum);

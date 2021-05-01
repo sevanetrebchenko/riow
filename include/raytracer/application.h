@@ -6,7 +6,7 @@
 #include <raytracer/writer.h>
 #include <raytracer/camera.h>
 #include <raytracer/ray.h>
-#include <raytracer/intersectable_collection.h>
+#include <raytracer/hittable_collection.h>
 
 namespace RT {
 
@@ -22,8 +22,10 @@ namespace RT {
         private:
             [[nodiscard]] glm::vec3 RayColor(const Ray& ray, int numBounces) const;
 
+            void CornellCube();
+
             Camera _camera;
-            IntersectableCollection _collection;
+            HittableCollection _collection;
 
             int _width;
             int _height;

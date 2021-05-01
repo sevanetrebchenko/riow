@@ -8,17 +8,14 @@ set(CORE_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/src/raytracer/ray.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/camera.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/hit_record.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/intersectable.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/intersectable_collection.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/aabb.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/utility_math.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/transform.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/material.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/directory.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/object_loader.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/mesh.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/model.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/intersections.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/sphere.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/hittable.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/hittable_collection.cpp"
         )
 
 add_executable(RT ${CORE_SOURCE_FILES})

@@ -27,15 +27,15 @@ namespace RT {
     Lambertian::~Lambertian() = default;
 
     bool Lambertian::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
-        glm::vec3 scatterDirection = hitRecord.normal + RandomDirectionInHemisphere(hitRecord.normal);
+        glm::vec3 scatterDirection = hitRecord.GetIntersectionNormal() + RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal());
 
         // Ensure scatter direction does not cancel out normal.
         if ((std::abs(scatterDirection.x) < std::numeric_limits<float>::epsilon()) && (std::abs(scatterDirection.y) < std::numeric_limits<float>::epsilon()) && (std::abs(scatterDirection.z) < std::numeric_limits<float>::epsilon())) {
-            scatterDirection = hitRecord.normal;
+            scatterDirection = hitRecord.GetIntersectionNormal();
         }
 
         attenuation = _albedo;
-        scattered = Ray(hitRecord.point, scatterDirection);
+        scattered = Ray(hitRecord.GetIntersectionPoint(), scatterDirection);
         return true;
     }
 
@@ -49,11 +49,11 @@ namespace RT {
 
     bool Metallic::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
         const glm::vec3& V = glm::normalize(ray.GetDirection());
-        const glm::vec3& N = glm::normalize(hitRecord.normal);
+        const glm::vec3& N = glm::normalize(hitRecord.GetIntersectionNormal());
 
         glm::vec3 R = Reflect(V, N);
 
-        scattered = Ray(hitRecord.point, R + _fuzziness * glm::normalize(RandomDirectionInHemisphere(hitRecord.normal)));
+        scattered = Ray(hitRecord.GetIntersectionPoint(), R + _fuzziness * glm::normalize(RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal())));
         attenuation = _albedo;
 
         // Returns true if the output ray is scattered (dot product of parallel vectors is 0).
@@ -68,8 +68,8 @@ namespace RT {
     Dielectric::~Dielectric() = default;
 
     bool Dielectric::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
-        float refractionRatio = hitRecord.outwardFacing ? 1.0f / _refractionIndex : _refractionIndex; // Reverse Snell's law if the ray comes from the inside.
-        const glm::vec3& N = hitRecord.normal;
+        float refractionRatio = hitRecord.GetOutwardFacing() ? 1.0f / _refractionIndex : _refractionIndex; // Reverse Snell's law if the ray comes from the inside.
+        const glm::vec3& N = hitRecord.GetIntersectionNormal();
         const glm::vec3& V = ray.GetDirection();
 
         // Deriving Snell's law.
@@ -86,7 +86,7 @@ namespace RT {
             refractedDirection = Refract(V, N, refractionRatio);
         }
 
-        scattered = Ray(hitRecord.point, refractedDirection);
+        scattered = Ray(hitRecord.GetIntersectionPoint(), refractedDirection);
         attenuation = glm::vec3(1.0f, 1.0f, 1.0f);
 
         return true;
