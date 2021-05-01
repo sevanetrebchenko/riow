@@ -26,6 +26,7 @@ namespace RT {
             [[nodiscard]] bool GetOutwardFacing() const;
 
             void SetIntersectionUVs(const glm::vec2& uv);
+            void SetIntersectionUVs(float u, float v);
             [[nodiscard]] const glm::vec2& GetIntersectionUVs() const;
 
             void SetIntersectionMaterial(IMaterial* material);

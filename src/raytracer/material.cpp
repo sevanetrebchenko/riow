@@ -19,15 +19,24 @@ namespace RT {
         return glm::vec3(0.0f); // Non-emitting materials return black.
     }
 
-
-
-    Lambertian::Lambertian(const glm::vec3 &albedo) : _texture(new SolidColorTexture(albedo)) {
+    glm::vec3 IMaterial::GetEmitted(const glm::vec2 &uv, const glm::vec3 &point) const {
+        return glm::vec3(0.0f);
     }
 
-    Lambertian::Lambertian(ITexture *texture) : _texture(texture) {
+
+    Lambertian::Lambertian(const glm::vec3 &albedo) : _texture(new SolidColorTexture(albedo)),
+                                                      _deleteTexture(true) {
     }
 
-    Lambertian::~Lambertian() = default;
+    Lambertian::Lambertian(ITexture *texture) : _texture(texture),
+                                                _deleteTexture(false) {
+    }
+
+    Lambertian::~Lambertian() {
+        if (_deleteTexture) {
+            delete _texture;
+        }
+    }
 
     bool Lambertian::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
         glm::vec3 scatterDirection = hitRecord.GetIntersectionNormal() + RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal());
@@ -45,14 +54,9 @@ namespace RT {
 
 
 
-    Metallic::Metallic(const glm::vec3 &albedo, float fuzziness) : _texture(new SolidColorTexture(albedo)),
+    Metallic::Metallic(const glm::vec3 &albedo, float fuzziness) : _albedo(albedo),
                                                                    _fuzziness(fuzziness < 1.0f ? fuzziness : 1.0f)
                                                                    {
-    }
-
-    Metallic::Metallic(ITexture* texture, float fuzziness) : _texture(texture),
-                                                             _fuzziness(fuzziness < 1.0f ? fuzziness : 1.0f)
-                                                             {
     }
 
     Metallic::~Metallic() = default;
@@ -64,7 +68,7 @@ namespace RT {
         glm::vec3 R = Reflect(V, N);
 
         scattered = Ray(hitRecord.GetIntersectionPoint(), R + _fuzziness * glm::normalize(RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal())));
-        attenuation = _texture->GetColorValue(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
+        attenuation = _albedo;
 
         // Returns true if the output ray is scattered (dot product of parallel vectors is 0).
         return glm::dot(scattered.GetDirection(), N) > 0.0f;

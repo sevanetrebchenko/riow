@@ -42,6 +42,10 @@ namespace RT {
         _uv = uv;
     }
 
+    void HitRecord::SetIntersectionUVs(float u, float v) {
+        _uv = glm::vec2(u, v);
+    }
+
     const glm::vec2 &HitRecord::GetIntersectionUVs() const {
         return _uv;
     }

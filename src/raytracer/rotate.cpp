@@ -9,7 +9,7 @@ namespace RT {
         glm::vec3 radians = glm::radians(rotation);
 
         _negativeMatrix = glm::rotate(-radians.x, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(-radians.y, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(-radians.z, glm::vec3(0.0f, 0.0f, 1.0f));
-        _positiveMatrix = glm::rotate(radians.x, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(radians.y, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(radians.z, glm::vec3(0.0f, 0.0f, 1.0f));
+        _positiveMatrix = glm::rotate(radians.z, glm::vec3(0.0f, 0.0f, 1.0f)) * glm::rotate(radians.y, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(radians.x, glm::vec3(1.0f, 0.0f, 0.0f));
         ConstructBoundingBox();
     }
 

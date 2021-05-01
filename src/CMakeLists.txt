@@ -21,6 +21,8 @@ set(CORE_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/src/raytracer/bvh.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/rotate.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/translate.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/light.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/cube.cpp"
         )
 
 add_executable(RT ${CORE_SOURCE_FILES})

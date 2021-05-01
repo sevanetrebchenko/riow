@@ -1,11 +1,8 @@
 
 #include <raytracer/bvh.h>
+#include <raytracer/common.h>
 
 namespace RT {
-
-    const int X_AXIS = 0;
-    const int Y_AXIS = 1;
-    const int Z_AXIS = 2;
 
     bool Compare(IHittable *left, IHittable *right, int axis) {
         AABB a;

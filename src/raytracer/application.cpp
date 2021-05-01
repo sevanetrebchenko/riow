@@ -5,13 +5,15 @@
 #include <raytracer/material.h>
 #include <raytracer/utility_math.h>
 #include <raytracer/sphere.h>
+#include <raytracer/cube.h>
+#include <raytracer/light.h>
 
 namespace RT {
 
-    Application::Application(const std::string &outputFilename, int width, int height) : _camera({ 0.0f, 0.0f, 8.0f },
-                                                                                                 { 0.0f, 0.0f, 0.0f },
+    Application::Application(const std::string &outputFilename, int width, int height) : _camera({ 26.0f, 3.0f, 6.0f },
+                                                                                                 { 0.0f, 2.0f, 0.0f },
                                                                                                  { 0.0f, 1.0f, 0.0f },
-                                                                                                 45,
+                                                                                                 20,
                                                                                                  (float)width / (float)height,
                                                                                                  0.0f,
                                                                                                  glm::length(glm::vec3(0.0f, 0.0f, 8.0f) - glm::vec3(0.0f))),
@@ -25,12 +27,17 @@ namespace RT {
     }
 
     void Application::Init() {
+        // Floor.
         _collection.Add(new Sphere(glm::vec3(0.0f, -1001.0f, 0.0f), 1000.0f, new Lambertian(glm::vec3(0.5f))));
-        _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
-        _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
+//
+//        _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
+//        _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
 
-        IHittable* sphere = CreateSphere(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(45.0f, 45.0f, 0.0f), 1.0f, new Lambertian(new ImageTexture("assets/textures/earthmap.jpg")));
+        IHittable* sphere = CreateSphere(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(45.0f, 45.0f, 0.0f), 2.0f, new Lambertian(new ImageTexture("assets/textures/earthmap.jpg")));
         _collection.Add(sphere);
+
+        // Light.
+        _collection.Add(new YZRectangle(glm::vec2(-1.0f, -1.0f), glm::vec2(1.0f, 1.0f), 6.0f, new Light(glm::vec3(10.0f))));
 
         _collection.BuildBVH();
     }
@@ -81,17 +88,22 @@ namespace RT {
         }
 
         // Ray does not intersect scene, return background color.
-        if (_collection.Hit(ray, 0.001f, std::numeric_limits<float>::infinity(), hitRecord)) {
-            Ray scattered;
-            glm::vec3 attenuation;
-
-            if (hitRecord.GetIntersectionMaterial()->GetScattered(ray, hitRecord, attenuation, scattered)) {
-                return attenuation * RayColor(scattered, numBounces - 1);
-            }
+        if (!_collection.Hit(ray, 0.001f, std::numeric_limits<float>::infinity(), hitRecord)) {
+            return background;
         }
 
-        float t = 0.5f * (ray.GetDirection().y + 1.0f);
-        return lerp(glm::vec3(0.5f, 0.7f, 1.0f), glm::vec3(1.0f), t);
+        const IMaterial* material = hitRecord.GetIntersectionMaterial();
+
+        Ray scattered;
+        glm::vec3 attenuation;
+        glm::vec3 emitted = material->GetEmitted(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
+
+        // Ray hit light (lights do not scatter, return only emitted light.
+        if (!material->GetScattered(ray, hitRecord, attenuation, scattered)) {
+            return emitted;
+        }
+
+        return emitted + attenuation * RayColor(scattered, numBounces - 1);
     }
 
     void Application::CornellCube() {

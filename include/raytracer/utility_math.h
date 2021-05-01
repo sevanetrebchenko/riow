@@ -39,19 +39,6 @@ namespace RT {
     glm::vec3 RandomDirectionInUnitDisk();
     glm::vec3 RandomDirectionInHemisphere(const glm::vec3& rayDirection);
 
-    float LengthSquared(const glm::vec3& vector);
-    float DistanceSquared(const glm::vec3& first, const glm::vec3& second);
-
-    glm::mat4 AffineInverse(const glm::mat4& matrix);
-
-    glm::vec3 RotateAroundX(const glm::vec3& element, float degrees);
-    glm::vec3 RotateAroundY(const glm::vec3& element, float degrees);
-    glm::vec3 RotateAroundZ(const glm::vec3& element, float degrees);
-
-    glm::mat4 RotateAroundX(float degrees);
-    glm::mat4 RotateAroundY(float degrees);
-    glm::mat4 RotateAroundZ(float degrees);
-
 }
 
 #endif //RAYTRACER_UTILITY_MATH_H

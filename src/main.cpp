@@ -2,7 +2,7 @@
 #include <raytracer/application.h>
 
 int main() {
-    RT::Application app("test", 2000, 2000);
+    RT::Application app("test", 200, 200);
 
     try {
         app.Init();
