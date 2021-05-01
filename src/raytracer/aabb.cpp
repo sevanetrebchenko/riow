@@ -49,6 +49,65 @@ namespace RT {
         }
     }
 
+    bool AABB::Hit(const Ray &ray, float tMin, float tMax) const {
+        float intersectionTime;
+        const glm::vec3& rayOrigin = ray.GetOrigin();
+        const glm::vec3& rayDirection = ray.GetDirection();
+
+        // Rays that start inside the AABB are automatically intersecting.
+        bool inside = true;
+        for (int i = 0; i < 3; ++i) {
+            if (rayOrigin[i] < minimum[i] || rayOrigin[i] > maximum[i]) {
+                inside = false;
+                break;
+            }
+        }
+        if (inside) {
+            intersectionTime = 0.001f;
+            return true;
+        }
+
+        float min = std::numeric_limits<float>::min();
+        float max = std::numeric_limits<float>::max();
+
+        for (int i = 0; i < 3; ++i) {
+            // Ray direction is parallel.
+            if (std::abs(rayDirection[i]) < std::numeric_limits<float>::epsilon()) {
+                if (rayOrigin[i] < minimum[i] || rayOrigin[i] > maximum[i]) {
+                    return false;
+                }
+            }
+            else {
+                // Break up intersection along each plane.
+                float div = 1.0f / rayDirection[i];
+
+                float tMinCurrent = (minimum[i] - rayOrigin[i]) * div;
+                float tMaxCurrent = (maximum[i] - rayOrigin[i]) * div;
+
+                // Flip intersection times if the ray is facing the opposite way.
+                if (tMinCurrent > tMaxCurrent) {
+                    std::swap(tMaxCurrent, tMinCurrent);
+                }
+
+                min = std::max(tMin, tMinCurrent);
+                max = std::min(tMax, tMaxCurrent);
+
+                if (min > max) {
+                    return false;
+                }
+            }
+        }
+
+        // AABB is behind the origin of the ray.
+        if (max < 0) {
+            return false;
+        }
+
+        // Compute intersection point.
+        intersectionTime = min;
+        return true;
+    }
+
     AABB Combine(const AABB &aabb1, const AABB &aabb2) {
         glm::vec3 minimum = glm::min(aabb1.minimum, aabb2.minimum);
         glm::vec3 maximum = glm::max(aabb1.maximum, aabb2.maximum);

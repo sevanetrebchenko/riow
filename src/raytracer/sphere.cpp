@@ -6,7 +6,7 @@ namespace RT {
     Sphere::Sphere(const glm::vec3& centerPosition, float radius, IMaterial* material) : _centerPosition(centerPosition),
                                                                                          _radius(radius),
                                                                                          _material(material),
-                                                                                         _boundingBox(centerPosition, glm::vec3(0.0f), glm::vec3(radius))
+                                                                                         _boundingBox(centerPosition - glm::vec3(radius), centerPosition + glm::vec3(radius))
                                                                                          {
     }
 
@@ -51,6 +51,11 @@ namespace RT {
         hitRecord.SetIntersectionNormal(ray, normal);
         hitRecord.SetIntersectionUVs(CalculateUV(normal));
 
+        return true;
+    }
+
+    bool Sphere::GetAABB(AABB &aabb) const {
+        aabb = _boundingBox;
         return true;
     }
 

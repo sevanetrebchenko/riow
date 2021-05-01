@@ -15,9 +15,7 @@ namespace RT {
                    float verticalFOV,
                    float aspectRatio,
                    float apertureLength,
-                   float focusDistance,
-                   float apertureOpenTime,
-                   float apertureCloseTime);
+                   float focusDistance);
             ~Camera();
 
             [[nodiscard]] Ray GetRay(float u, float v) const;
@@ -29,8 +27,6 @@ namespace RT {
             float _aspectRatio;
             float _lensRadius;
             float _focusDistance;
-            float _apertureOpenTime;
-            float _apertureCloseTime;
 
             glm::vec3 _eyePosition;
 

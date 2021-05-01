@@ -1,5 +1,6 @@
 
 #include <raytracer/hittable_collection.h>
+#include <raytracer/bvh.h>
 
 namespace RT {
 
@@ -23,6 +24,7 @@ namespace RT {
         bool intersected = false;
         float nearestIntersectionTime = std::numeric_limits<float>::max();
 
+        // Intersect with all objects to get the nearest intersection.
         for (IHittable* object : _collection) {
             if (object->Hit(ray, tMin, nearestIntersectionTime, temp)) {
                 intersected = true;
@@ -35,5 +37,31 @@ namespace RT {
         }
 
         return intersected;
+    }
+
+    bool HittableCollection::GetAABB(AABB &aabb) const {
+        if (_collection.empty()) {
+            return false;
+        }
+
+        AABB temp((glm::vec3(std::numeric_limits<float>::max())), glm::vec3(std::numeric_limits<float>::lowest()));
+        bool first = true;
+
+        // Combine the bounding boxes for all objects.
+        for (IHittable* object : _collection) {
+            if (!object->GetAABB(temp)) {
+                return false;
+            }
+            aabb = first ? temp : Combine(aabb, temp);
+            first = false;
+        }
+
+        return true;
+    }
+
+    void HittableCollection::BuildBVH() {
+        BVHNode* node = new BVHNode(_collection, 0, _collection.size());
+        _collection.clear();
+        _collection.push_back(node);
     }
 }

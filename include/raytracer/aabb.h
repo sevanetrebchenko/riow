@@ -4,15 +4,17 @@
 
 #include <raytracer/mesh.h>
 #include <raytracer/transform.h>
+#include <raytracer/ray.h>
 
 namespace RT {
 
     struct AABB {
-        AABB(const glm::vec3& minimum, const glm::vec3& maximum);
+        AABB(const glm::vec3 &minimum = glm::vec3(std::numeric_limits<float>::max()), const glm::vec3 &maximum = glm::vec3(std::numeric_limits<float>::lowest()));
         AABB(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
         ~AABB();
 
         [[nodiscard]] glm::vec3 GetCenter() const;
+        [[nodiscard]] bool Hit(const Ray& ray, float tMin, float tMax) const;
 
         glm::vec3 minimum;
         glm::vec3 maximum;

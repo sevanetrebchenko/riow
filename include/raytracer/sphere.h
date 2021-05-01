@@ -12,9 +12,10 @@ namespace RT {
     class Sphere : public IHittable {
         public:
             Sphere(const glm::vec3& centerPosition, float radius, IMaterial* material);
-            ~Sphere();
+            ~Sphere() override;
 
-            bool Hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const override;
+            [[nodiscard]] bool Hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const override;
+            [[nodiscard]] bool GetAABB(AABB& aabb) const override;
 
         private:
             [[nodiscard]] glm::vec2 CalculateUV(const glm::vec3& intersectionPoint) const;

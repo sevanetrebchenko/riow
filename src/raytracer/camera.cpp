@@ -10,16 +10,12 @@ namespace RT {
                    float verticalFOV,
                    float aspectRatio,
                    float apertureLength,
-                   float focusDistance,
-                   float apertureOpenTime,
-                   float apertureCloseTime) : _verticalFOV(verticalFOV),
-                                              _aspectRatio(aspectRatio),
-                                              _eyePosition(eyePosition),
-                                              _lensRadius(apertureLength / 2.0f),
-                                              _focusDistance(focusDistance),
-                                              _apertureOpenTime(apertureOpenTime),
-                                              _apertureCloseTime(apertureCloseTime)
-    {
+                   float focusDistance) : _verticalFOV(verticalFOV),
+                                          _aspectRatio(aspectRatio),
+                                          _eyePosition(eyePosition),
+                                          _lensRadius(apertureLength / 2.0f),
+                                          _focusDistance(focusDistance)
+                                          {
         float theta = glm::radians(verticalFOV);
         float height = std::tan(theta / 2.0f);
 
@@ -45,7 +41,7 @@ namespace RT {
         // Rays that intersect sufficiently close to the focus distance will appear in focus.
         glm::vec3 startingRayPosition = _eyePosition + _horizontal * direction.x + _vertical * direction.y;
 
-        return Ray(startingRayPosition, _topLeftCorner + u * _horizontal - v * _vertical - startingRayPosition);//, glm::linearRand(_apertureOpenTime, _apertureCloseTime));
+        return Ray(startingRayPosition, _topLeftCorner + u * _horizontal - v * _vertical - startingRayPosition);
     }
 
     float Camera::GetAspectRatio() const {

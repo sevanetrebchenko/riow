@@ -13,8 +13,7 @@ namespace RT {
                                                                                                  45,
                                                                                                  (float)width / (float)height,
                                                                                                  0.1f,
-                                                                                                 glm::length(glm::vec3(0.0f, 0.0f, 8.0f) - glm::vec3(0.0f)),
-                                                                                                 0.0f, 4.0f),
+                                                                                                 glm::length(glm::vec3(0.0f, 0.0f, 8.0f) - glm::vec3(0.0f))),
                                                                                          _width(width),
                                                                                          _height(height),
                                                                                          _writer(new JPGWriter(outputFilename, width, height))
@@ -29,6 +28,8 @@ namespace RT {
         _collection.Add(new Sphere(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, new Dielectric(1.33f)));
         _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
         _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
+
+        _collection.BuildBVH();
     }
 
     void Application::Run() {
