@@ -31,8 +31,8 @@ namespace RT {
         return true;
     }
 
-    bool Rotate::GetBoundingBox(AABB &boundingBox) const {
-        boundingBox = _boundingBox;
+    bool Rotate::GetAABB(AABB &aabb) const {
+        aabb = _boundingBox;
         return _hasBoundingBox;
     }
 

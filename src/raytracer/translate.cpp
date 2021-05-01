@@ -22,15 +22,15 @@ namespace RT {
         return true;
     }
 
-    bool Translate::GetBoundingBox(AABB &boundingBox) const {
-        boundingBox = _boundingBox;
+    bool Translate::GetAABB(AABB& aabb) const {
+        aabb = _aabb;
         return _hasBoundingBox;
     }
 
     void Translate::ConstructBoundingBox() {
-        _hasBoundingBox = _object->GetAABB(_boundingBox);
+        _hasBoundingBox = _object->GetAABB(_aabb);
         if (_hasBoundingBox) {
-            _boundingBox = AABB(_boundingBox.minimum + _displacement, _boundingBox.maximum + _displacement);
+            _aabb = AABB(_aabb.minimum + _displacement, _aabb.maximum + _displacement);
         }
     }
 }

@@ -1,6 +1,7 @@
 
 #include <raytracer/application.h>
 #include <raytracer/hit_record.h>
+#include <raytracer/hittable_factory.h>
 #include <raytracer/material.h>
 #include <raytracer/utility_math.h>
 #include <raytracer/sphere.h>
@@ -25,9 +26,11 @@ namespace RT {
 
     void Application::Init() {
         _collection.Add(new Sphere(glm::vec3(0.0f, -1001.0f, 0.0f), 1000.0f, new Lambertian(glm::vec3(0.5f))));
-        _collection.Add(new Sphere(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, new Lambertian(new ImageTexture("assets/textures/earthmap.jpg"))));
         _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
         _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
+
+        IHittable* sphere = CreateSphere(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(45.0f, 45.0f, 0.0f), 1.0f, new Lambertian(new ImageTexture("assets/textures/earthmap.jpg")));
+        _collection.Add(sphere);
 
         _collection.BuildBVH();
     }

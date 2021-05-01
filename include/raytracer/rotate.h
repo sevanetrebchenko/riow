@@ -13,7 +13,7 @@ namespace RT {
             ~Rotate() override;
 
             bool Hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const override;
-            bool GetBoundingBox(AABB& boundingBox) const;
+            bool GetAABB(AABB& aabb) const override;
 
         private:
             void ConstructBoundingBox();

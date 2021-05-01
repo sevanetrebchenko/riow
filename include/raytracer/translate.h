@@ -13,7 +13,7 @@ namespace RT {
             ~Translate() override;
 
             bool Hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const override;
-            bool GetBoundingBox(AABB& boundingBox) const;
+            bool GetAABB(AABB& aabb) const override;
 
         private:
             void ConstructBoundingBox();
@@ -21,7 +21,7 @@ namespace RT {
             glm::vec3 _displacement;
 
             IHittable* _object;
-            AABB _boundingBox;
+            AABB _aabb;
             bool _hasBoundingBox;
     };
 
