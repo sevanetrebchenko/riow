@@ -21,7 +21,10 @@ namespace RT {
 
 
 
-    Lambertian::Lambertian(const glm::vec3 &albedo) : _albedo(albedo) {
+    Lambertian::Lambertian(const glm::vec3 &albedo) : _texture(new SolidColorTexture(albedo)) {
+    }
+
+    Lambertian::Lambertian(ITexture *texture) : _texture(texture) {
     }
 
     Lambertian::~Lambertian() = default;
@@ -34,15 +37,22 @@ namespace RT {
             scatterDirection = hitRecord.GetIntersectionNormal();
         }
 
-        attenuation = _albedo;
+        attenuation = _texture->GetColorValue(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
         scattered = Ray(hitRecord.GetIntersectionPoint(), scatterDirection);
         return true;
     }
 
 
 
-    Metallic::Metallic(const glm::vec3 &albedo, float fuzziness) : _albedo(albedo),
-                                                                   _fuzziness(fuzziness < 1.0f ? fuzziness : 1.0f) {
+
+    Metallic::Metallic(const glm::vec3 &albedo, float fuzziness) : _texture(new SolidColorTexture(albedo)),
+                                                                   _fuzziness(fuzziness < 1.0f ? fuzziness : 1.0f)
+                                                                   {
+    }
+
+    Metallic::Metallic(ITexture* texture, float fuzziness) : _texture(texture),
+                                                             _fuzziness(fuzziness < 1.0f ? fuzziness : 1.0f)
+                                                             {
     }
 
     Metallic::~Metallic() = default;
@@ -54,7 +64,7 @@ namespace RT {
         glm::vec3 R = Reflect(V, N);
 
         scattered = Ray(hitRecord.GetIntersectionPoint(), R + _fuzziness * glm::normalize(RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal())));
-        attenuation = _albedo;
+        attenuation = _texture->GetColorValue(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
 
         // Returns true if the output ray is scattered (dot product of parallel vectors is 0).
         return glm::dot(scattered.GetDirection(), N) > 0.0f;

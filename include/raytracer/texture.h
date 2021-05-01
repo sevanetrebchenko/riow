@@ -28,7 +28,7 @@ namespace RT {
 
     class ImageTexture : public ITexture {
         public:
-            ImageTexture(const char* filename);
+            ImageTexture(const std::string& filename);
             ~ImageTexture() override;
 
             [[nodiscard]] glm::vec3 GetColorValue(float u, float v, const glm::vec3& point) const override;

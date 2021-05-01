@@ -5,6 +5,7 @@
 #include <pch.h>
 #include <raytracer/ray.h>
 #include <raytracer/hit_record.h>
+#include <raytracer/texture.h>
 
 namespace RT {
 
@@ -18,24 +19,26 @@ namespace RT {
     class Lambertian : public IMaterial {
         public:
             explicit Lambertian(const glm::vec3& albedo);
+            explicit Lambertian(ITexture* texture);
             ~Lambertian();
 
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 
         private:
-            glm::vec3 _albedo;
+            ITexture* _texture;
     };
 
 
     class Metallic : public IMaterial {
         public:
             Metallic(const glm::vec3& albedo, float fuzziness);
+            Metallic(ITexture* texture, float fuzziness);
             ~Metallic();
 
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 
         private:
-            glm::vec3 _albedo;
+            ITexture* _texture;
             float _fuzziness;
     };
 

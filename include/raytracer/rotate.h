@@ -2,7 +2,8 @@
 #ifndef RAYTRACING_ROTATE_H
 #define RAYTRACING_ROTATE_H
 
-#include "hittable.h"
+#include <pch.h>
+#include <raytracer/hittable.h>
 
 namespace RT {
 
@@ -12,7 +13,7 @@ namespace RT {
             ~Rotate() override;
 
             bool Hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const override;
-            bool GetBoundingBox(float tMin, float tMax, AABB& boundingBox) const override;
+            bool GetBoundingBox(AABB& boundingBox) const;
 
         private:
             void ConstructBoundingBox();

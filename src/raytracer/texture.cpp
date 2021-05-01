@@ -1,5 +1,6 @@
 
 #include <raytracer/texture.h>
+#include <raytracer/directory.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -25,12 +26,14 @@ namespace RT {
 
 
 
-    ImageTexture::ImageTexture(const char *filename) {
+    ImageTexture::ImageTexture(const std::string& filename) {
+        std::string file = ConvertToNativeSeparators(filename);
+
         stbi_set_flip_vertically_on_load(true);
-        _data = stbi_load(filename, &_width, &_height, &_channels, 3);
+        _data = stbi_load(file.c_str(), &_width, &_height, &_channels, 3);
 
         if (!_data) {
-            throw std::runtime_error("Failed to open image texture file: " + std::string(filename));
+            throw std::runtime_error("Failed to open image texture file: " + file);
         }
     }
 
@@ -49,7 +52,7 @@ namespace RT {
     glm::vec3 ImageTexture::GetColor(float u, float v, const glm::vec3 &point) const {
         // Clamp input UV coordinates to not go outside the range of the image [0, 1].
         u = glm::clamp(u, 0.0f, 1.0f);
-        u = glm::clamp(v, 0.0f, 1.0f);
+        v = glm::clamp(v, 0.0f, 1.0f);
 
         int x = static_cast<int>(u * (float)_width);
         int y = static_cast<int>(v * (float)_height);

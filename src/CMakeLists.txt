@@ -19,7 +19,8 @@ set(CORE_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/src/raytracer/hittable_factory.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/texture.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/bvh.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/bvh.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/rotate.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/translate.cpp"
         )
 
 add_executable(RT ${CORE_SOURCE_FILES})

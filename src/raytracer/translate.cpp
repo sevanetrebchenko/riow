@@ -1,5 +1,5 @@
 
-#include "translate.h"
+#include <raytracer/translate.h>
 
 namespace RT {
 
@@ -11,26 +11,26 @@ namespace RT {
     }
 
     bool Translate::Hit(const Ray &ray, float tMin, float tMax, HitRecord &hitRecord) const {
-        Ray translatedRay(ray.GetOrigin() - _displacement, ray.GetDirection(), ray.GetTime());
+        Ray translatedRay(ray.GetOrigin() - _displacement, ray.GetDirection());
 
         if (!_object->Hit(translatedRay, tMin, tMax, hitRecord)) {
             return false;
         }
 
         hitRecord.SetIntersectionPoint(hitRecord.GetIntersectionPoint() + _displacement);
-        hitRecord.SetFaceNormal(translatedRay, hitRecord.GetFaceNormal());
+        hitRecord.SetIntersectionNormal(translatedRay, hitRecord.GetIntersectionNormal());
         return true;
     }
 
-    bool Translate::GetBoundingBox(float tMin, float tMax, AABB &boundingBox) const {
+    bool Translate::GetBoundingBox(AABB &boundingBox) const {
         boundingBox = _boundingBox;
         return _hasBoundingBox;
     }
 
     void Translate::ConstructBoundingBox() {
-        _hasBoundingBox = _object->GetBoundingBox(0.0f, 1.0f, _boundingBox);
+        _hasBoundingBox = _object->GetAABB(_boundingBox);
         if (_hasBoundingBox) {
-            _boundingBox = AABB(_boundingBox.GetMinimum() + _displacement, _boundingBox.GetMaximum() + _displacement);
+            _boundingBox = AABB(_boundingBox.minimum + _displacement, _boundingBox.maximum + _displacement);
         }
     }
 }

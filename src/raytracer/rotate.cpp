@@ -1,16 +1,15 @@
 
-#include "glm/gtx/transform.hpp"
-#include "rotate.h"
-#include "affine_math.h"
-#include <algorithm>
+#include <raytracer/rotate.h>
 
 namespace RT {
 
     Rotate::Rotate(IHittable *object, glm::vec3 rotation) : _object(object), _rotation(rotation) {
         // Rotation in 3D is not commutative.
         // The matrix to rotate the ray before checking ray intersection is NOT the same matrix to rotate the ray back.
-        _negativeMatrix = RotateAroundX(-_rotation.x) * RotateAroundY(-_rotation.y) * RotateAroundZ(-_rotation.z);
-        _positiveMatrix = RotateAroundZ(_rotation.z) * RotateAroundY(_rotation.y) * RotateAroundX(_rotation.x);
+        glm::vec3 radians = glm::radians(rotation);
+
+        _negativeMatrix = glm::rotate(-radians.x, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(-radians.y, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(-radians.z, glm::vec3(0.0f, 0.0f, 1.0f));
+        _positiveMatrix = glm::rotate(radians.x, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(radians.y, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(radians.z, glm::vec3(0.0f, 0.0f, 1.0f));
         ConstructBoundingBox();
     }
 
@@ -20,7 +19,7 @@ namespace RT {
 
     bool Rotate::Hit(const Ray &ray, float tMin, float tMax, HitRecord &hitRecord) const {
         // Perform inverse rotation.
-        Ray rotatedRay(_negativeMatrix * glm::vec4(ray.GetOrigin(), 1.0f), _negativeMatrix * glm::vec4(ray.GetDirection(), 0.0f), ray.GetTime());
+        Ray rotatedRay(_negativeMatrix * glm::vec4(ray.GetOrigin(), 1.0f), _negativeMatrix * glm::vec4(ray.GetDirection(), 0.0f));
 
         if (!_object->Hit(rotatedRay, tMin, tMax, hitRecord)) {
             return false;
@@ -28,20 +27,20 @@ namespace RT {
 
         // Undo rotation.
         hitRecord.SetIntersectionPoint(_positiveMatrix * glm::vec4(hitRecord.GetIntersectionPoint(), 1.0f));
-        hitRecord.SetFaceNormal(rotatedRay, _positiveMatrix * glm::vec4(hitRecord.GetFaceNormal(), 0.0f));
+        hitRecord.SetIntersectionNormal(rotatedRay, _positiveMatrix * glm::vec4(hitRecord.GetIntersectionNormal(), 0.0f));
         return true;
     }
 
-    bool Rotate::GetBoundingBox(float tMin, float tMax, AABB &boundingBox) const {
+    bool Rotate::GetBoundingBox(AABB &boundingBox) const {
         boundingBox = _boundingBox;
         return _hasBoundingBox;
     }
 
     void Rotate::ConstructBoundingBox() {
-        _hasBoundingBox = _object->GetBoundingBox(0.0f, 1.0f, _boundingBox);
+        _hasBoundingBox = _object->GetAABB(_boundingBox);
 
         if (_hasBoundingBox) {
-            const glm::vec3& aabbMinimum = _boundingBox.GetMinimum();
+            const glm::vec3& aabbMinimum = _boundingBox.minimum;
             const glm::vec3& aabbCenter = _boundingBox.GetCenter();
 
             float halfWidth = std::fabs(aabbCenter.x - aabbMinimum.x);
