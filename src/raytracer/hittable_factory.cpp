@@ -3,6 +3,7 @@
 
 // Objects.
 #include <raytracer/sphere.h>
+#include <raytracer/cube.h>
 
 // Transforms.
 #include <raytracer/rotate.h>
@@ -12,10 +13,19 @@ namespace RT {
 
     IHittable *CreateSphere(const glm::vec3 &position, const glm::vec3 &rotation, float radius, IMaterial *material) {
         // Create initial sphere.
-        Sphere* sphere = new Sphere(glm::vec3(0.0f), radius, material);
-        IHittable* rotated = new Rotate(sphere, rotation);
-        IHittable* translated = new Translate(rotated, position);
+        IHittable* sphere = new Sphere(glm::vec3(0.0f), radius, material);
+        sphere = new Rotate(sphere, rotation);
+        sphere = new Translate(sphere, position);
 
-        return translated;
+        return sphere;
+    }
+
+    IHittable *CreateCube(const glm::vec3 &position, const glm::vec3 &rotation, const glm::vec3& scale, IMaterial *material) {
+        // Create initial cube.
+        IHittable* cube = new Cube(glm::vec3(0.0f), scale, material);
+        cube = new Rotate(cube, rotation);
+        cube = new Translate(cube, position);
+
+        return cube;
     }
 }

@@ -3,18 +3,14 @@
 
 namespace RT {
 
-    Light::Light(const glm::vec3 &color) : _texture(new SolidColorTexture(color)),
-                                           _deleteTexture(true) {
+    Light::Light(const glm::vec3 &color) : _texture(new SolidColorTexture(color)) {
     }
 
-    Light::Light(ITexture *texture) : _texture(texture),
-                                      _deleteTexture(false) {
+    Light::Light(ITexture *texture) : _texture(texture) {
     }
 
     Light::~Light() {
-        if (_deleteTexture) {
-            delete _texture;
-        }
+        delete _texture;
     }
 
     bool Light::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {

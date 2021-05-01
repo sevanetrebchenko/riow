@@ -18,7 +18,6 @@ namespace RT {
             [[nodiscard]] glm::vec3 GetEmitted(float u, float v, const glm::vec3& point) const override;
 
         private:
-            bool _deleteTexture;
             ITexture* _texture;
     };
 

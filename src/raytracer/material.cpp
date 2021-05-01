@@ -15,6 +15,10 @@ namespace RT {
         return ((K * refractionCoefficient) - std::sqrt(1.0f - K * K * (1.0f - refractionCoefficient * refractionCoefficient))) * N - K * -V;
     }
 
+
+
+    IMaterial::~IMaterial() = default;
+
     glm::vec3 IMaterial::GetEmitted(float u, float v, const glm::vec3 &point) const {
         return glm::vec3(0.0f); // Non-emitting materials return black.
     }
@@ -24,18 +28,15 @@ namespace RT {
     }
 
 
-    Lambertian::Lambertian(const glm::vec3 &albedo) : _texture(new SolidColorTexture(albedo)),
-                                                      _deleteTexture(true) {
+
+    Lambertian::Lambertian(const glm::vec3 &albedo) : _texture(new SolidColorTexture(albedo)) {
     }
 
-    Lambertian::Lambertian(ITexture *texture) : _texture(texture),
-                                                _deleteTexture(false) {
+    Lambertian::Lambertian(ITexture *texture) : _texture(texture) {
     }
 
     Lambertian::~Lambertian() {
-        if (_deleteTexture) {
-            delete _texture;
-        }
+        delete _texture;
     }
 
     bool Lambertian::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {

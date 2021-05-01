@@ -9,6 +9,7 @@
 namespace RT {
 
     IHittable* CreateSphere(const glm::vec3& position, const glm::vec3& rotation, float radius, IMaterial* material);
+    IHittable* CreateCube(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale, IMaterial* material);
 
 }
 

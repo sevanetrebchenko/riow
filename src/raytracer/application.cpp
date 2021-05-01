@@ -10,13 +10,12 @@
 
 namespace RT {
 
-    Application::Application(const std::string &outputFilename, int width, int height) : _camera({ 26.0f, 3.0f, 6.0f },
-                                                                                                 { 0.0f, 2.0f, 0.0f },
-                                                                                                 { 0.0f, 1.0f, 0.0f },
+    Application::Application(const std::string &outputFilename, int width, int height) : _camera(glm::vec3(26.0f, 3.0f, 6.0f),
+                                                                                                 glm::vec3(0.0f, 2.0f, 0.0f),
+                                                                                                 glm::vec3(0.0f, 1.0f, 0.0f),
                                                                                                  20,
                                                                                                  (float)width / (float)height,
-                                                                                                 0.0f,
-                                                                                                 glm::length(glm::vec3(0.0f, 0.0f, 8.0f) - glm::vec3(0.0f))),
+                                                                                                 0.0f),
                                                                                          _width(width),
                                                                                          _height(height),
                                                                                          _writer(new JPGWriter(outputFilename, width, height))
@@ -27,26 +26,27 @@ namespace RT {
     }
 
     void Application::Init() {
-        // Floor.
-        _collection.Add(new Sphere(glm::vec3(0.0f, -1001.0f, 0.0f), 1000.0f, new Lambertian(glm::vec3(0.5f))));
+//        // Floor.
+//        _collection.Add(new Sphere(glm::vec3(0.0f, -1001.0f, 0.0f), 1000.0f, new Lambertian(glm::vec3(0.5f))));
+////
+////        _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
+////        _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
 //
-//        _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
-//        _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
+//        IHittable* sphere = CreateSphere(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(45.0f, 45.0f, 0.0f), 2.0f, new Lambertian(new ImageTexture("assets/textures/earthmap.jpg")));
+//        _collection.Add(sphere);
+//
+//        // Light.
+//        _collection.Add(new YZRectangle(glm::vec2(-1.0f, -1.0f), glm::vec2(1.0f, 1.0f), 6.0f, new Light(glm::vec3(10.0f))));
 
-        IHittable* sphere = CreateSphere(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(45.0f, 45.0f, 0.0f), 2.0f, new Lambertian(new ImageTexture("assets/textures/earthmap.jpg")));
-        _collection.Add(sphere);
-
-        // Light.
-        _collection.Add(new YZRectangle(glm::vec2(-1.0f, -1.0f), glm::vec2(1.0f, 1.0f), 6.0f, new Light(glm::vec3(10.0f))));
-
+        CornellBox();
         _collection.BuildBVH();
     }
 
     void Application::Run() {
         float u, v;
         int lineCounter = _height;
-        int samplesPerPixel = 8;
-        int numRayBounces = 10;
+        int samplesPerPixel = 100;
+        int numRayBounces = 8;
 
         auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -106,30 +106,35 @@ namespace RT {
         return emitted + attenuation * RayColor(scattered, numBounces - 1);
     }
 
-    void Application::CornellCube() {
-        glm::vec3 redColor = glm::vec3(178.0f, 34.0f, 34.0f) / glm::vec3(255.0f);
-        glm::vec3 greenColor = glm::vec3(0.0f, 128.0f, 0.0f) / glm::vec3(255.0f);
+    void Application::CornellBox() {
+        // Configure camera.
+        _camera.SetEyePosition(glm::vec3(278.0f, 278.0f, -750.0f));
+        _camera.SetLookAtPosition(glm::vec3(278.0f, 278.0f, 0.0f));
+        _camera.SetVerticalFOV(40.0f);
 
-        glm::vec3 blue(0.0f, 0.0f, 1.0f);
+        // Configure scene objects.
+        Lambertian* red = new Lambertian(glm::vec3(0.65f, 0.05f, 0.05f));
+        Lambertian* white = new Lambertian(glm::vec3(0.73f));
+        Lambertian* green = new Lambertian(glm::vec3(0.12f, 0.45f, 0.15f));
+        Light* light = new Light(glm::vec3(15.0f));
 
-//        // Red.
-//        _collection.Add(new Model(glm::vec3(-16.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(redColor)));
-//        // Green.
-//        _collection.Add(new Model(glm::vec3(16.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(greenColor)));
-//
-//        glm::vec3 wallColor = glm::vec3(255.0f, 245.0f, 181.0f) / glm::vec3(255.0f);
-//
-//        // Floor.
-//        _collection.Add(new Model(glm::vec3(0.0f, -16.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(wallColor)));
-//        // Ceiling.
-//        _collection.Add(new Model(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(wallColor)));
-//        // Back wall.
-//        _collection.Add(new Model(glm::vec3(0.0f, 0.0f, -16.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(wallColor)));
-//
-//        // Cube 1.
-//        _collection.Add(new Model(glm::vec3(2.0f, -4.0f, -4.0f), glm::vec3(0.0f, -20.0f, 0.0f), glm::vec3(2.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(blue)));
-//        // Cube 2.
-//        _collection.Add(new Model(glm::vec3(-7.0f, 0.0f, -7.0f), glm::vec3(0.0f, 15.0f, 0.0f), glm::vec3(3.0f, 6.0f, 3.0f), OBJLoader::GetInstance().Load("assets/cube.obj"), new Lambertian(blue)));
+        // Green wall.
+        _collection.Add(new YZRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 555.0f, green));
+
+        // Red wall.
+        _collection.Add(new YZRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 0.0f, red));
+
+        // Light.
+        _collection.Add(new XZRectangle(glm::vec2(213.0f, 227.0f), glm::vec2(343.0f, 332.0f), 554.0f, light));
+
+        // White walls.
+        _collection.Add(new XZRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 0.0f, white));
+        _collection.Add(new XZRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 555.0f, white));
+        _collection.Add(new XYRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 555.0f, white));
+
+        // Cubes.
+        _collection.Add(CreateCube(glm::vec3(265.0f, 0.0f, 295.0f), glm::vec3(0.0f, 15.0f, 0.0f), glm::vec3(165.0f, 330.0f, 165.0f), white));
+        _collection.Add(CreateCube(glm::vec3(130.0f, 0.0f, 65.0f), glm::vec3(0.0f, -18.0f, 0.0f), glm::vec3(165.0f, 165.0f, 165.0f), white));
     }
 
 }

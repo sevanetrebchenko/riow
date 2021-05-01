@@ -63,7 +63,7 @@ namespace RT {
         // Construct hit record.
         hitRecord.SetIntersectionTime(intersectionTime);
         hitRecord.SetIntersectionPoint(ray.Step(intersectionTime));
-        hitRecord.SetIntersectionNormal(ray, glm::vec3(0.0f, 0.0f, 1.0f)); // Hard-coded for xy rectangle.
+        hitRecord.SetIntersectionNormal(ray, _normal);
         hitRecord.SetIntersectionUVs((one - _min[_mainAxis1]) / (_max[_mainAxis1] - _min[_mainAxis1]), (two - _min[_mainAxis2]) / (_max[_mainAxis2] - _min[_mainAxis2]));
         hitRecord.SetIntersectionMaterial(_material);
 
@@ -94,7 +94,9 @@ namespace RT {
     XYRectangle::XYRectangle(const glm::vec2 &min, const glm::vec2 &max, float height, IMaterial *material) : Rectangle(glm::vec3(min.x, min.y, height), glm::vec3(max.x, max.y, height), Z_AXIS, material) {
     }
 
-    XYRectangle::~XYRectangle() = default;
+    XYRectangle::~XYRectangle() {
+        delete _material;
+    }
 
     bool XYRectangle::Hit(const Ray &ray, float tMin, float tMax, HitRecord &hitRecord) const {
         return ComputeIntersection(ray, tMin, tMax, hitRecord);
@@ -105,7 +107,9 @@ namespace RT {
     XZRectangle::XZRectangle(const glm::vec2 &min, const glm::vec2 &max, float height, IMaterial *material) : Rectangle(glm::vec3(min.x, height, min.y), glm::vec3(max.x, height, max.y), Y_AXIS, material) {
     }
 
-    XZRectangle::~XZRectangle() = default;
+    XZRectangle::~XZRectangle() {
+        delete _material;
+    }
 
     bool XZRectangle::Hit(const Ray &ray, float tMin, float tMax, HitRecord &hitRecord) const {
         return ComputeIntersection(ray, tMin, tMax, hitRecord);
@@ -116,10 +120,44 @@ namespace RT {
     YZRectangle::YZRectangle(const glm::vec2 &min, const glm::vec2 &max, float height, IMaterial *material) : Rectangle(glm::vec3(height, min.x, min.y), glm::vec3(height, max.x, max.y), X_AXIS, material) {
     }
 
-    YZRectangle::~YZRectangle() = default;
+    YZRectangle::~YZRectangle() {
+        delete _material;
+    }
 
     bool YZRectangle::Hit(const Ray &ray, float tMin, float tMax, HitRecord &hitRecord) const {
         return ComputeIntersection(ray, tMin, tMax, hitRecord);
     }
 
+
+
+    Cube::Cube(const glm::vec3 &min, const glm::vec3 &max, IMaterial *material) : _min(min),
+                                                                                  _max(max),
+                                                                                  _material(material),
+                                                                                  _aabb(min, max)
+                                                                                  {
+        // Construct cube sides.
+        _sides.Add(new XYRectangle(glm::vec2(min.x, min.y), glm::vec2(max.x, max.y), max.z, material));
+        _sides.Add(new XYRectangle(glm::vec2(min.x, min.y), glm::vec2(max.x, max.y), min.z, material));
+
+        _sides.Add(new XZRectangle(glm::vec2(min.x, min.z), glm::vec2(max.x, max.z), max.y, material));
+        _sides.Add(new XZRectangle(glm::vec2(min.x, min.z), glm::vec2(max.x, max.z), min.y, material));
+
+        _sides.Add(new YZRectangle(glm::vec2(min.y, min.z), glm::vec2(max.y, max.z), max.x, material));
+        _sides.Add(new YZRectangle(glm::vec2(min.y, min.z), glm::vec2(max.y, max.z), min.x, material));
+
+        _sides.BuildBVH();
+    }
+
+    Cube::~Cube() {
+        delete _material;
+    }
+
+    bool Cube::Hit(const Ray &ray, float tMin, float tMax, HitRecord &hitRecord) const {
+        return _sides.Hit(ray, tMin, tMax, hitRecord);
+    }
+
+    bool Cube::GetAABB(AABB &aabb) const {
+        aabb = _aabb;
+        return true;
+    }
 }

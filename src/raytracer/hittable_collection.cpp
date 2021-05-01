@@ -22,7 +22,7 @@ namespace RT {
     bool HittableCollection::Hit(const Ray &ray, float tMin, float tMax, HitRecord &hitRecord) const {
         HitRecord temp;
         bool intersected = false;
-        float nearestIntersectionTime = std::numeric_limits<float>::max();
+        float nearestIntersectionTime = tMax;
 
         // Intersect with all objects to get the nearest intersection.
         for (IHittable* object : _collection) {
@@ -44,7 +44,7 @@ namespace RT {
             return false;
         }
 
-        AABB temp((glm::vec3(std::numeric_limits<float>::max())), glm::vec3(std::numeric_limits<float>::lowest()));
+        AABB temp;
         bool first = true;
 
         // Combine the bounding boxes for all objects.

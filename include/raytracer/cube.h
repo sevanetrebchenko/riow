@@ -5,6 +5,7 @@
 #include <pch.h>
 #include <raytracer/hittable.h>
 #include <raytracer/material.h>
+#include <raytracer/hittable_collection.h>
 
 namespace RT {
 
@@ -53,6 +54,24 @@ namespace RT {
             [[nodiscard]] bool Hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const override;
     };
 
+
+
+    class Cube : public IHittable {
+        public:
+            Cube(const glm::vec3& min, const glm::vec3& max, IMaterial* material);
+            ~Cube();
+
+            [[nodiscard]] bool Hit(const Ray& ray, float tMin, float tMax, HitRecord& hitRecord) const override;
+            [[nodiscard]] bool GetAABB(AABB& aabb) const override;
+
+        private:
+            glm::vec3 _min;
+            glm::vec3 _max;
+            IMaterial* _material;
+            AABB _aabb;
+
+            HittableCollection _sides;
+    };
 }
 
 #endif //RAYTRACER_CUBE_H

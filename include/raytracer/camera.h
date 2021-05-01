@@ -15,13 +15,19 @@ namespace RT {
                    float verticalFOV,
                    float aspectRatio,
                    float apertureLength,
-                   float focusDistance);
+                   float focusDistance = -1.0f);
             ~Camera();
 
             [[nodiscard]] Ray GetRay(float u, float v) const;
             [[nodiscard]] float GetAspectRatio() const;
 
+            void SetEyePosition(const glm::vec3& eyePosition);
+            void SetLookAtPosition(const glm::vec3& lookAtPosition);
+            void SetVerticalFOV(float fov);
+
         private:
+            void CalculateCameraProperties();
+
             // Camera lens properties.
             float _verticalFOV;
             float _aspectRatio;
@@ -29,6 +35,7 @@ namespace RT {
             float _focusDistance;
 
             glm::vec3 _eyePosition;
+            glm::vec3 _lookAtPosition;
 
             // Camera orientation vectors.
             glm::vec3 _globalUpVector;

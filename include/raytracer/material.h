@@ -11,6 +11,8 @@ namespace RT {
 
     class IMaterial {
         public:
+            virtual ~IMaterial();
+
             [[nodiscard]] virtual bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const = 0;
             [[nodiscard]] virtual glm::vec3 GetEmitted(const glm::vec2& uv, const glm::vec3& point) const;
             [[nodiscard]] virtual glm::vec3 GetEmitted(float u, float v, const glm::vec3& point) const;
@@ -21,12 +23,11 @@ namespace RT {
         public:
             explicit Lambertian(const glm::vec3& albedo);
             explicit Lambertian(ITexture* texture);
-            ~Lambertian();
+            ~Lambertian() override;
 
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 
         private:
-            bool _deleteTexture;
             ITexture* _texture;
     };
 
@@ -34,7 +35,7 @@ namespace RT {
     class Metallic : public IMaterial {
         public:
             Metallic(const glm::vec3& albedo, float fuzziness);
-            ~Metallic();
+            ~Metallic() override;
 
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 
@@ -47,7 +48,7 @@ namespace RT {
     class Dielectric : public IMaterial {
         public:
             explicit Dielectric(float refractionIndex);
-            ~Dielectric();
+            ~Dielectric() override;
 
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 

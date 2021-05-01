@@ -11,24 +11,50 @@ namespace RT {
                    float aspectRatio,
                    float apertureLength,
                    float focusDistance) : _verticalFOV(verticalFOV),
+                                          _globalUpVector(globalUpVector),
                                           _aspectRatio(aspectRatio),
                                           _eyePosition(eyePosition),
+                                          _lookAtPosition(lookAtPosition),
                                           _lensRadius(apertureLength / 2.0f),
                                           _focusDistance(focusDistance)
                                           {
-        float theta = glm::radians(verticalFOV);
+        CalculateCameraProperties();
+    }
+
+    void Camera::SetEyePosition(const glm::vec3 &eyePosition) {
+        _eyePosition = eyePosition;
+        CalculateCameraProperties();
+    }
+
+    void Camera::SetLookAtPosition(const glm::vec3 &lookAtPosition) {
+        _lookAtPosition = lookAtPosition;
+        CalculateCameraProperties();
+    }
+
+    void Camera::SetVerticalFOV(float fov) {
+        _verticalFOV = fov;
+        CalculateCameraProperties();
+    }
+
+    void Camera::CalculateCameraProperties() {
+        // Distance was not set.
+        if (_focusDistance == -1.0f) {
+            _focusDistance = glm::length(_lookAtPosition - _eyePosition);
+        }
+
+        float theta = glm::radians(_verticalFOV);
         float height = std::tan(theta / 2.0f);
 
         float viewportHeight = 2.0f * height;
         float viewportWidth = viewportHeight * _aspectRatio;
 
-        _forwardVector = glm::normalize(eyePosition - lookAtPosition);
-        _rightVector = glm::normalize(glm::cross(globalUpVector, _forwardVector));
+        _forwardVector = glm::normalize(_eyePosition - _lookAtPosition);
+        _rightVector = glm::normalize(glm::cross(_globalUpVector, _forwardVector));
         _upVector = glm::normalize(glm::cross(_forwardVector, _rightVector));
 
-        _horizontal = focusDistance * viewportWidth * _rightVector;
-        _vertical = focusDistance * viewportHeight * _upVector;
-        _topLeftCorner = _eyePosition - _horizontal / 2.0f + _vertical / 2.0f - focusDistance * _forwardVector;
+        _horizontal = _focusDistance * viewportWidth * _rightVector;
+        _vertical = _focusDistance * viewportHeight * _upVector;
+        _topLeftCorner = _eyePosition - _horizontal / 2.0f + _vertical / 2.0f - _focusDistance * _forwardVector;
     }
 
     Camera::~Camera() = default;
