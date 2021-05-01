@@ -1,5 +1,6 @@
 
 #include <raytracer/camera.h>
+#include <raytracer/utility_math.h>
 
 namespace RT {
 
@@ -7,10 +8,18 @@ namespace RT {
                    glm::vec3 lookAtPosition,
                    glm::vec3 globalUpVector,
                    float verticalFOV,
-                   float aspectRatio) : _verticalFOV(verticalFOV),
-                                        _aspectRatio(aspectRatio),
-                                        _eyePosition(eyePosition)
-                                        {
+                   float aspectRatio,
+                   float apertureLength,
+                   float focusDistance,
+                   float apertureOpenTime,
+                   float apertureCloseTime) : _verticalFOV(verticalFOV),
+                                              _aspectRatio(aspectRatio),
+                                              _eyePosition(eyePosition),
+                                              _lensRadius(apertureLength / 2.0f),
+                                              _focusDistance(focusDistance),
+                                              _apertureOpenTime(apertureOpenTime),
+                                              _apertureCloseTime(apertureCloseTime)
+    {
         float theta = glm::radians(verticalFOV);
         float height = std::tan(theta / 2.0f);
 
@@ -21,17 +30,22 @@ namespace RT {
         _rightVector = glm::normalize(glm::cross(globalUpVector, _forwardVector));
         _upVector = glm::normalize(glm::cross(_forwardVector, _rightVector));
 
-        float focalLength = 1.0f;
-
-        _horizontal = viewportWidth * _rightVector;
-        _vertical = viewportHeight * _upVector;
-        _topLeftCorner = _eyePosition - _horizontal / 2.0f + _vertical / 2.0f - focalLength * _forwardVector;
+        _horizontal = focusDistance * viewportWidth * _rightVector;
+        _vertical = focusDistance * viewportHeight * _upVector;
+        _topLeftCorner = _eyePosition - _horizontal / 2.0f + _vertical / 2.0f - focusDistance * _forwardVector;
     }
 
     Camera::~Camera() = default;
 
     Ray Camera::GetRay(float u, float v) const {
-        return Ray(_eyePosition, _topLeftCorner + u * _horizontal - v * _vertical - _eyePosition);
+        // Focus blur with depth of field.
+        glm::vec3 direction = _lensRadius * RandomDirectionInUnitDisk();
+
+        // Start the ray offset a little around a disk surrounding the camera eye for it to purposefully "miss".
+        // Rays that intersect sufficiently close to the focus distance will appear in focus.
+        glm::vec3 startingRayPosition = _eyePosition + _horizontal * direction.x + _vertical * direction.y;
+
+        return Ray(startingRayPosition, _topLeftCorner + u * _horizontal - v * _vertical - startingRayPosition);//, glm::linearRand(_apertureOpenTime, _apertureCloseTime));
     }
 
     float Camera::GetAspectRatio() const {

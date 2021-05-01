@@ -36,6 +36,7 @@ namespace RT {
     // Random utility functions.
     glm::vec3 RandomDirection(float min, float max);
     glm::vec3 RandomDirectionInUnitSphere();
+    glm::vec3 RandomDirectionInUnitDisk();
     glm::vec3 RandomDirectionInHemisphere(const glm::vec3& rayDirection);
 
     float LengthSquared(const glm::vec3& vector);

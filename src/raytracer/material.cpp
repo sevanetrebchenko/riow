@@ -69,8 +69,8 @@ namespace RT {
 
     bool Dielectric::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
         float refractionRatio = hitRecord.GetOutwardFacing() ? 1.0f / _refractionIndex : _refractionIndex; // Reverse Snell's law if the ray comes from the inside.
-        const glm::vec3& N = hitRecord.GetIntersectionNormal();
-        const glm::vec3& V = ray.GetDirection();
+        const glm::vec3& N = glm::normalize(hitRecord.GetIntersectionNormal());
+        const glm::vec3& V = glm::normalize(ray.GetDirection());
 
         // Deriving Snell's law.
         float refractionCoefficient = glm::dot(N, -V);
@@ -93,7 +93,7 @@ namespace RT {
     }
 
     float Dielectric::SchlickApproximation(float refractionCoefficient, float refractionRatio) const {
-        float f = ((1.0f - refractionRatio) / (1.0f + refractionRatio));
+        float f = (1.0f - refractionRatio) / (1.0f + refractionRatio);
         f *= f;
         return f + (1.0f - f) * IntegerPower(1.0f - refractionCoefficient, 5);
     }

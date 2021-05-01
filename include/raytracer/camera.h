@@ -13,7 +13,11 @@ namespace RT {
                    glm::vec3 lookAt,
                    glm::vec3 up,
                    float verticalFOV,
-                   float aspectRatio);
+                   float aspectRatio,
+                   float apertureLength,
+                   float focusDistance,
+                   float apertureOpenTime,
+                   float apertureCloseTime);
             ~Camera();
 
             [[nodiscard]] Ray GetRay(float u, float v) const;
@@ -23,10 +27,15 @@ namespace RT {
             // Camera lens properties.
             float _verticalFOV;
             float _aspectRatio;
+            float _lensRadius;
+            float _focusDistance;
+            float _apertureOpenTime;
+            float _apertureCloseTime;
 
             glm::vec3 _eyePosition;
 
             // Camera orientation vectors.
+            glm::vec3 _globalUpVector;
             glm::vec3 _upVector;
             glm::vec3 _forwardVector;
             glm::vec3 _rightVector;

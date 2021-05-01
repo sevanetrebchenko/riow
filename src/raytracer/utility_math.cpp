@@ -99,6 +99,18 @@ namespace RT {
         }
     }
 
+    glm::vec3 RandomDirectionInUnitDisk() {
+        while (true) {
+            glm::vec3 direction = glm::vec3(glm::linearRand(-1.0f, 1.0f), glm::linearRand(-1.0f, 1.0f), 0.0f);
+
+            if (glm::dot(direction, direction) >= 1.0f) {
+                continue;
+            }
+
+            return direction;
+        }
+    }
+
     glm::vec3 RandomDirectionInHemisphere(const glm::vec3& rayDirection) {
         glm::vec3 random = RandomDirectionInUnitSphere();
         return glm::dot(random, rayDirection) > 0.0f ? random : -random;

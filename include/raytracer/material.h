@@ -42,14 +42,13 @@ namespace RT {
 
     class Dielectric : public IMaterial {
         public:
-            explicit Dielectric(float refractionIndex);
+            Dielectric(float refractionIndex);
             ~Dielectric();
 
             bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
 
         private:
             [[nodiscard]] float SchlickApproximation(float refractionCoefficient, float refractionRatio) const;
-
             float _refractionIndex;
     };
 
