@@ -72,19 +72,17 @@ namespace RT {
 
     void Rectangle::ConstructAABB() {
         static float lightThickness = 0.0001f;
+        glm::vec3 offset(0.0f);
+        offset[_thinAxis] += lightThickness;
 
         // Pad AABB in the thin axis for it not to be infinitesimally thin.
         // Negative.
         {
-            glm::vec3 offset(0.0f);
-            offset[_thinAxis] -= lightThickness;
-            _aabb.minimum = _min + offset;
+            _aabb.minimum = _min - offset;
         }
 
         // Positive.
         {
-            glm::vec3 offset(0.0f);
-            offset[_thinAxis] += lightThickness;
             _aabb.maximum = _max + offset;
         }
     }

@@ -48,7 +48,7 @@ namespace RT {
         }
 
         attenuation = _texture->GetColorValue(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
-        scattered = Ray(hitRecord.GetIntersectionPoint(), scatterDirection);
+        scattered = Ray(hitRecord.GetIntersectionPoint() + hitRecord.GetIntersectionNormal() * 0.005f, scatterDirection);
         return true;
     }
 

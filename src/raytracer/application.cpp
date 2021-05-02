@@ -45,8 +45,8 @@ namespace RT {
     void Application::Run() {
         float u, v;
         int lineCounter = _height;
-        int samplesPerPixel = 100;
-        int numRayBounces = 8;
+        int samplesPerPixel = 200;
+        int numRayBounces = 50;
 
         auto startTime = std::chrono::high_resolution_clock::now();
 

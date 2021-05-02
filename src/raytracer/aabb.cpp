@@ -54,18 +54,18 @@ namespace RT {
         const glm::vec3& rayOrigin = ray.GetOrigin();
         const glm::vec3& rayDirection = ray.GetDirection();
 
-        // Rays that start inside the AABB are automatically intersecting.
-        bool inside = true;
-        for (int i = 0; i < 3; ++i) {
-            if (rayOrigin[i] < minimum[i] || rayOrigin[i] > maximum[i]) {
-                inside = false;
-                break;
-            }
-        }
-        if (inside) {
-            intersectionTime = 0.001f;
-            return true;
-        }
+//        // Rays that start inside the AABB are automatically intersecting.
+//        bool inside = true;
+//        for (int i = 0; i < 3; ++i) {
+//            if (rayOrigin[i] < minimum[i] || rayOrigin[i] > maximum[i]) {
+//                inside = false;
+//                break;
+//            }
+//        }
+//        if (inside) {
+//            intersectionTime = 0.001f;
+//            return true;
+//        }
 
         float min = std::numeric_limits<float>::min();
         float max = std::numeric_limits<float>::max();
