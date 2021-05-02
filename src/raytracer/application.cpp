@@ -26,18 +26,6 @@ namespace RT {
     }
 
     void Application::Init() {
-//        // Floor.
-//        _collection.Add(new Sphere(glm::vec3(0.0f, -1001.0f, 0.0f), 1000.0f, new Lambertian(glm::vec3(0.5f))));
-////
-////        _collection.Add(new Sphere(glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f), 0.0f)));
-////        _collection.Add(new Sphere(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f, new Metallic(glm::vec3(0.8f, 0.6f, 0.2f), 0.0f)));
-//
-//        IHittable* sphere = CreateSphere(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(45.0f, 45.0f, 0.0f), 2.0f, new Lambertian(new ImageTexture("assets/textures/earthmap.jpg")));
-//        _collection.Add(sphere);
-//
-//        // Light.
-//        _collection.Add(new YZRectangle(glm::vec2(-1.0f, -1.0f), glm::vec2(1.0f, 1.0f), 6.0f, new Light(glm::vec3(10.0f))));
-
         CornellBox();
         _collection.BuildBVH();
     }
@@ -45,7 +33,7 @@ namespace RT {
     void Application::Run() {
         float u, v;
         int lineCounter = _height;
-        int samplesPerPixel = 20;
+        int samplesPerPixel = 200;
         int numRayBounces = 8;
 
         auto startTime = std::chrono::high_resolution_clock::now();
@@ -97,14 +85,13 @@ namespace RT {
         Ray scattered;
         glm::vec3 attenuation;
         glm::vec3 emitted = material->GetEmitted(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
-        float pdf;
 
         // Ray hit light (lights do not scatter, return only emitted light.
-        if (!material->GetScattered(ray, hitRecord, attenuation, scattered, pdf)) {
+        if (!material->GetScattered(ray, hitRecord, attenuation, scattered)) {
             return emitted;
         }
 
-        return emitted + attenuation * material->GetScatteringPDF(ray, hitRecord, scattered) * RayColor(scattered, numBounces - 1) / pdf; // Importance sampling.
+        return emitted + attenuation * RayColor(scattered, numBounces - 1);
     }
 
     void Application::CornellBox() {
@@ -117,7 +104,7 @@ namespace RT {
         Lambertian* red = new Lambertian(glm::vec3(0.65f, 0.05f, 0.05f));
         Lambertian* white = new Lambertian(glm::vec3(0.73f));
         Lambertian* green = new Lambertian(glm::vec3(0.12f, 0.45f, 0.15f));
-        Light* light = new Light(glm::vec3(15.0f));
+        Light* light = new Light(glm::vec3(7.0f));
 
         // Green wall.
         _collection.Add(new YZRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 555.0f, green));
@@ -126,7 +113,7 @@ namespace RT {
         _collection.Add(new YZRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 0.0f, red));
 
         // Light.
-        _collection.Add(new XZRectangle(glm::vec2(213.0f, 227.0f), glm::vec2(343.0f, 332.0f), 554.0f, light));
+        _collection.Add(new XZRectangle(glm::vec2(113.0f, 127.0f), glm::vec2(443.0f, 432.0f), 554.0f, light));
 
         // White walls.
         _collection.Add(new XZRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 0.0f, white));
@@ -134,8 +121,18 @@ namespace RT {
         _collection.Add(new XYRectangle(glm::vec2(0.0f, 0.0f), glm::vec2(555.0f, 555.0f), 555.0f, white));
 
         // Cubes.
-        _collection.Add(CreateCube(glm::vec3(265.0f, 0.0f, 295.0f), glm::vec3(0.0f, 15.0f, 0.0f), glm::vec3(165.0f, 330.0f, 165.0f), white));
-        _collection.Add(CreateCube(glm::vec3(130.0f, 0.0f, 65.0f), glm::vec3(0.0f, -18.0f, 0.0f), glm::vec3(165.0f, 165.0f, 165.0f), white));
+        _collection.Add(CreateCube(glm::vec3(265.0f, 0.0f, 295.0f), glm::vec3(0.0f, 15.0f, 0.0f), glm::vec3(165.0f, 330.0f, 165.0f), new Metallic(glm::vec3(0.8f), 0.0f)));
+        _collection.Add(CreateCube(glm::vec3(130.0f, 0.0f, 65.0f), glm::vec3(0.0f, -18.0f, 0.0f), glm::vec3(165.0f, 165.0f, 165.0f), new Dielectric(1.33f)));
+    }
+
+    void Application::TestScene() {
+        // Configure camera.
+        _camera.SetEyePosition(glm::vec3(478.0f, 278.0f, -600.0f));
+        _camera.SetLookAtPosition(glm::vec3(278.0f, 278.0f, 0.0f));
+        _camera.SetVerticalFOV(40.0f);
+
+        // Configure scene objects.
+        
     }
 
 }

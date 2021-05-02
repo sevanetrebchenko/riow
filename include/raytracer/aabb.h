@@ -2,8 +2,6 @@
 #ifndef RAYTRACER_AABB_H
 #define RAYTRACER_AABB_H
 
-#include <raytracer/mesh.h>
-#include <raytracer/transform.h>
 #include <raytracer/ray.h>
 
 namespace RT {

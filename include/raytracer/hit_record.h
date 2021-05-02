@@ -23,6 +23,8 @@ namespace RT {
 
             void SetIntersectionNormal(const Ray& ray, const glm::vec3& normal);
             [[nodiscard]] const glm::vec3& GetIntersectionNormal() const;
+
+            void SetOutwardFacing(bool outwardFacing);
             [[nodiscard]] bool GetOutwardFacing() const;
 
             void SetIntersectionUVs(const glm::vec2& uv);

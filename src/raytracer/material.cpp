@@ -20,14 +20,6 @@ namespace RT {
 
     IMaterial::~IMaterial() = default;
 
-    bool IMaterial::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float &pdf) const {
-        return false;
-    }
-
-    float IMaterial::GetScatteringPDF(const Ray &ray, const HitRecord &hitRecord, const Ray &scattered) const {
-        return 0.0f;
-    }
-
     glm::vec3 IMaterial::GetEmitted(float u, float v, const glm::vec3 &point) const {
         return glm::vec3(0.0f); // Non-emitting materials return black.
     }
@@ -48,10 +40,10 @@ namespace RT {
         delete _texture;
     }
 
-    bool Lambertian::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float& pdf) const {
-        OrthonormalBasis basis(hitRecord.GetIntersectionNormal());
-
+    bool Lambertian::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
 //        glm::vec3 scatterDirection = hitRecord.GetIntersectionNormal() + RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal());
+
+        OrthonormalBasis basis(hitRecord.GetIntersectionNormal());
         glm::vec3 scatterDirection = basis.GetLocalVector(RandomCosineDirection());
 
         // Ensure scatter direction does not cancel out normal.
@@ -61,15 +53,8 @@ namespace RT {
 
         attenuation = _texture->GetColorValue(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
         scattered = Ray(hitRecord.GetIntersectionPoint(), scatterDirection);
-        pdf = glm::dot(hitRecord.GetIntersectionNormal(), scatterDirection) / (float)M_PI;
         return true;
     }
-
-    float Lambertian::GetScatteringPDF(const Ray& ray, const HitRecord& hitRecord, const Ray& scattered) const {
-        float cosine = glm::dot(hitRecord.GetIntersectionNormal(), scattered.GetDirection());
-        return cosine < 0.0f ? 0.0f : cosine / (float)M_PI;
-    }
-
 
 
 
@@ -80,7 +65,7 @@ namespace RT {
 
     Metallic::~Metallic() = default;
 
-    bool Metallic::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float& pdf) const {
+    bool Metallic::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
         const glm::vec3& V = glm::normalize(ray.GetDirection());
         const glm::vec3& N = glm::normalize(hitRecord.GetIntersectionNormal());
 
@@ -100,7 +85,7 @@ namespace RT {
 
     Dielectric::~Dielectric() = default;
 
-    bool Dielectric::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float& pdf) const {
+    bool Dielectric::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
         float refractionRatio = hitRecord.GetOutwardFacing() ? 1.0f / _refractionIndex : _refractionIndex; // Reverse Snell's law if the ray comes from the inside.
         const glm::vec3& N = glm::normalize(hitRecord.GetIntersectionNormal());
         const glm::vec3& V = glm::normalize(ray.GetDirection());
@@ -131,4 +116,22 @@ namespace RT {
         return f + (1.0f - f) * IntegerPower(1.0f - refractionCoefficient, 5);
     }
 
+
+
+    Isotropic::Isotropic(const glm::vec3& color) : _texture(new SolidColorTexture(color)) {
+    }
+
+    Isotropic::Isotropic(ITexture* texture) : _texture(texture) {
+    }
+
+    Isotropic::~Isotropic() {
+        delete _texture;
+    }
+
+    bool Isotropic::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
+        scattered = Ray(hitRecord.GetIntersectionPoint(), RandomDirectionInUnitSphere()); // Picks random direction in unit sphere.
+        attenuation = _texture->GetColorValue(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
+
+        return true;
+    }
 }

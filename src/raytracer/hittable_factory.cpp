@@ -1,13 +1,11 @@
 
 #include <raytracer/hittable_factory.h>
+#include <raytracer/transform.h>
 
 // Objects.
 #include <raytracer/sphere.h>
 #include <raytracer/cube.h>
 
-// Transforms.
-#include <raytracer/rotate.h>
-#include <raytracer/translate.h>
 
 namespace RT {
 

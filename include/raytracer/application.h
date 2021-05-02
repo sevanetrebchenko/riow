@@ -23,6 +23,7 @@ namespace RT {
             [[nodiscard]] glm::vec3 RayColor(const Ray& ray, int numBounces) const;
 
             void CornellBox();
+            void TestScene();
 
             Camera _camera;
             HittableCollection _collection;

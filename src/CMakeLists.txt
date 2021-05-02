@@ -19,10 +19,10 @@ set(CORE_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/src/raytracer/hittable_factory.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/texture.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/bvh.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/rotate.cpp"
-        "${PROJECT_SOURCE_DIR}/src/raytracer/translate.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/transform.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/light.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/cube.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/medium.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/onb.cpp"
         )
 

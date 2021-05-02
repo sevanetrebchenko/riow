@@ -34,6 +34,10 @@ namespace RT {
         return _normal;
     }
 
+    void HitRecord::SetOutwardFacing(bool outwardFacing) {
+        _frontFacing = outwardFacing;
+    }
+
     bool HitRecord::GetOutwardFacing() const {
         return _frontFacing;
     }
