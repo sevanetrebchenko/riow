@@ -23,6 +23,7 @@ set(CORE_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/src/raytracer/translate.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/light.cpp"
         "${PROJECT_SOURCE_DIR}/src/raytracer/cube.cpp"
+        "${PROJECT_SOURCE_DIR}/src/raytracer/onb.cpp"
         )
 
 add_executable(RT ${CORE_SOURCE_FILES})

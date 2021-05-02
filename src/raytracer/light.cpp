@@ -13,7 +13,7 @@ namespace RT {
         delete _texture;
     }
 
-    bool Light::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
+    bool Light::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float& pdf) const {
         return false; // Light does not scatter.
     }
 

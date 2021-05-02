@@ -13,7 +13,7 @@ namespace RT {
             explicit Light(ITexture* texture);
             ~Light();
 
-            [[nodiscard]] bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered) const override;
+            [[nodiscard]] bool GetScattered(const Ray& ray, const HitRecord& hitRecord, glm::vec3& attenuation, Ray& scattered, float& pdf) const override;
             [[nodiscard]] glm::vec3 GetEmitted(const glm::vec2& uv, const glm::vec3& point) const override;
             [[nodiscard]] glm::vec3 GetEmitted(float u, float v, const glm::vec3& point) const override;
 

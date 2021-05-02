@@ -1,6 +1,7 @@
 
 #include <raytracer/material.h>
 #include <raytracer/utility_math.h>
+#include <raytracer/onb.h>
 
 namespace RT {
 
@@ -18,6 +19,14 @@ namespace RT {
 
 
     IMaterial::~IMaterial() = default;
+
+    bool IMaterial::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float &pdf) const {
+        return false;
+    }
+
+    float IMaterial::GetScatteringPDF(const Ray &ray, const HitRecord &hitRecord, const Ray &scattered) const {
+        return 0.0f;
+    }
 
     glm::vec3 IMaterial::GetEmitted(float u, float v, const glm::vec3 &point) const {
         return glm::vec3(0.0f); // Non-emitting materials return black.
@@ -39,8 +48,11 @@ namespace RT {
         delete _texture;
     }
 
-    bool Lambertian::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
-        glm::vec3 scatterDirection = hitRecord.GetIntersectionNormal() + RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal());
+    bool Lambertian::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float& pdf) const {
+        OrthonormalBasis basis(hitRecord.GetIntersectionNormal());
+
+//        glm::vec3 scatterDirection = hitRecord.GetIntersectionNormal() + RandomDirectionInHemisphere(hitRecord.GetIntersectionNormal());
+        glm::vec3 scatterDirection = basis.GetLocalVector(RandomCosineDirection());
 
         // Ensure scatter direction does not cancel out normal.
         if ((std::abs(scatterDirection.x) < std::numeric_limits<float>::epsilon()) && (std::abs(scatterDirection.y) < std::numeric_limits<float>::epsilon()) && (std::abs(scatterDirection.z) < std::numeric_limits<float>::epsilon())) {
@@ -48,8 +60,14 @@ namespace RT {
         }
 
         attenuation = _texture->GetColorValue(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
-        scattered = Ray(hitRecord.GetIntersectionPoint() + hitRecord.GetIntersectionNormal() * 0.005f, scatterDirection);
+        scattered = Ray(hitRecord.GetIntersectionPoint(), scatterDirection);
+        pdf = glm::dot(hitRecord.GetIntersectionNormal(), scatterDirection) / (float)M_PI;
         return true;
+    }
+
+    float Lambertian::GetScatteringPDF(const Ray& ray, const HitRecord& hitRecord, const Ray& scattered) const {
+        float cosine = glm::dot(hitRecord.GetIntersectionNormal(), scattered.GetDirection());
+        return cosine < 0.0f ? 0.0f : cosine / (float)M_PI;
     }
 
 
@@ -62,7 +80,7 @@ namespace RT {
 
     Metallic::~Metallic() = default;
 
-    bool Metallic::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
+    bool Metallic::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float& pdf) const {
         const glm::vec3& V = glm::normalize(ray.GetDirection());
         const glm::vec3& N = glm::normalize(hitRecord.GetIntersectionNormal());
 
@@ -82,7 +100,7 @@ namespace RT {
 
     Dielectric::~Dielectric() = default;
 
-    bool Dielectric::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered) const {
+    bool Dielectric::GetScattered(const Ray &ray, const HitRecord &hitRecord, glm::vec3 &attenuation, Ray &scattered, float& pdf) const {
         float refractionRatio = hitRecord.GetOutwardFacing() ? 1.0f / _refractionIndex : _refractionIndex; // Reverse Snell's law if the ray comes from the inside.
         const glm::vec3& N = glm::normalize(hitRecord.GetIntersectionNormal());
         const glm::vec3& V = glm::normalize(ray.GetDirection());

@@ -38,6 +38,7 @@ namespace RT {
     glm::vec3 RandomDirectionInUnitSphere();
     glm::vec3 RandomDirectionInUnitDisk();
     glm::vec3 RandomDirectionInHemisphere(const glm::vec3& rayDirection);
+    glm::vec3 RandomCosineDirection();
 
 }
 

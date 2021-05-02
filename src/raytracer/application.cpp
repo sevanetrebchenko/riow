@@ -45,8 +45,8 @@ namespace RT {
     void Application::Run() {
         float u, v;
         int lineCounter = _height;
-        int samplesPerPixel = 200;
-        int numRayBounces = 50;
+        int samplesPerPixel = 20;
+        int numRayBounces = 8;
 
         auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -97,13 +97,14 @@ namespace RT {
         Ray scattered;
         glm::vec3 attenuation;
         glm::vec3 emitted = material->GetEmitted(hitRecord.GetIntersectionUVs(), hitRecord.GetIntersectionPoint());
+        float pdf;
 
         // Ray hit light (lights do not scatter, return only emitted light.
-        if (!material->GetScattered(ray, hitRecord, attenuation, scattered)) {
+        if (!material->GetScattered(ray, hitRecord, attenuation, scattered, pdf)) {
             return emitted;
         }
 
-        return emitted + attenuation * RayColor(scattered, numBounces - 1);
+        return emitted + attenuation * material->GetScatteringPDF(ray, hitRecord, scattered) * RayColor(scattered, numBounces - 1) / pdf; // Importance sampling.
     }
 
     void Application::CornellBox() {

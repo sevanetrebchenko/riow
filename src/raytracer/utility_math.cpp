@@ -116,6 +116,18 @@ namespace RT {
         return glm::dot(random, rayDirection) > 0.0f ? random : -random;
     }
 
+    glm::vec3 RandomCosineDirection() {
+        float r1 = glm::linearRand(0.0f, 1.0f);
+        float r2 = glm::linearRand(0.0f, 1.0f);
+        float z = std::sqrt(1.0f - r2);
+
+        float phi = 2 * (float)M_PI * r1;
+        float x = std::cos(phi) * std::sqrt(r2);
+        float y = std::sin(phi) * std::sqrt(r2);
+
+        return glm::vec3(x, y, z);
+    }
+
     float IntegerPower(float value, int power) {
         if (power == 0) {
             return 1.0f;
@@ -129,5 +141,6 @@ namespace RT {
 
         return result;
     }
+
 
 }
